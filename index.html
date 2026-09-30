@@ -344,16 +344,19 @@
         </div>
     </div>
 
-    <!-- Risk Wheel Modal Matching the Reference Graphic -->
+    <!-- Risk Wheel Modal -->
     <div id="risk-wheel-modal" class="modal">
         <div class="bg-slate-900 p-6 rounded-3xl text-center space-y-4 w-full max-w-sm border-2 border-amber-500 shadow-2xl relative">
-            <h2 class="text-2xl font-black text-amber-400">🔥 Risk Wheel Gamble</h2>
-            <p class="text-xs font-bold text-slate-400">Same sips. Different consequences.</p>
+            <!-- Secret Force-Jackpot Button -->
+            <button onclick="forceJackpotNextSpin()" class="absolute top-4 left-4 w-6 h-6 bg-slate-800 rounded-md opacity-50 cursor-default" title=""></button>
             
-            <div id="risk-wheel-container" class="my-4" style="background: #0f172a; border-color: #1e293b;">
-                <div class="pointer" style="border-top-color: #ef4444;"></div>
+            <h2 class="text-2xl font-black text-amber-400">🔥 Risk Wheel Gamble</h2>
+            <p class="text-xs font-bold text-slate-400">50% Red (Double) | 40% Green (Give Sips) | 10% Gold Jackpot (Give Double)!</p>
+            
+            <div id="risk-wheel-container" class="my-4">
+                <div class="pointer" style="border-top-color: #f59e0b;"></div>
                 <div id="risk-wheel"></div>
-                <div class="wheel-peg" style="background: #cbd5e1; border-color: #0f172a;"></div>
+                <div class="wheel-peg"></div>
             </div>
 
             <div id="target-player-select-box" class="space-y-2 hidden">
@@ -364,7 +367,7 @@
 
             <p id="risk-result-text" class="text-sm font-black text-white min-h-[40px] flex items-center justify-center bg-slate-800 rounded-xl p-2 border border-slate-700">Spin the wheel to test your luck!</p>
             <button id="spin-risk-btn" onclick="spinRiskWheel()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 py-3 rounded-xl font-black text-lg transition shadow-lg">Spin Wheel!</button>
-            <button onclick="closeRiskWheelModal()" class="w-full bg-slate-800 text-slate-300 py-2 rounded-xl font-bold text-sm">Close / Spin Again</button>
+            <button onclick="closeRiskWheelModal()" class="w-full bg-slate-800 text-slate-300 py-2 rounded-xl font-bold text-sm">Close</button>
         </div>
     </div>
 
@@ -431,6 +434,7 @@
         let lastSunkOwner = null;
         let lastSunkBallInfo = null;
         let suddenDeathAlertShown = false;
+        let isJackpotForced = false;
         
         let dangerousEnabled = true;
         let activeRulesPool = [];
@@ -1011,6 +1015,10 @@
             document.getElementById('sunk-modal').classList.add('active');
         }
 
+        function forceJackpotNextSpin() {
+            isJackpotForced = true;
+        }
+
         function openRiskWheelModal() {
             document.getElementById('sunk-modal').classList.remove('active');
             document.getElementById('risk-result-text').innerText = "Spin for Red (Drink Double), Green (Give Sips), or Gold Jackpot (Give Double)!";
@@ -1022,7 +1030,15 @@
         function spinRiskWheel() {
             document.getElementById('spin-risk-btn').disabled = true;
             const riskWheel = document.getElementById('risk-wheel');
-            const randomIdx = Math.floor(Math.random() * riskWheelSlices.length);
+            
+            let randomIdx;
+            if (isJackpotForced) {
+                randomIdx = riskWheelSlices.findIndex(slice => slice.type === 'jackpot');
+                isJackpotForced = false;
+            } else {
+                randomIdx = Math.floor(Math.random() * riskWheelSlices.length);
+            }
+            
             const sliceAngle = 360 / riskWheelSlices.length;
             const targetRotation = (360 * 5) - (randomIdx * sliceAngle);
 
@@ -1051,9 +1067,6 @@
                     lastSunkBallInfo.sips *= 2;
                     renderPlayerTrays();
                     document.getElementById('risk-result-text').innerHTML = `🔴 RED HIT! <span class="text-red-400">Drink Double (${lastSunkBallInfo.sips} Sips)!</span>`;
-                    document.getElementById('spin-risk-btn').innerText = "Spin Again / Close";
-                    document.getElementById('spin-risk-btn').disabled = false;
-                    document.getElementById('spin-risk-btn').onclick = closeRiskWheelModal;
                 } else if (outcome.type === 'give') {
                     document.getElementById('risk-result-text').innerHTML = `🟢 GREEN HIT! <span class="text-emerald-400">Give your sips to someone!</span>`;
                     targetLabel.innerText = "🎉 GREEN HIT! Choose who takes your sips:";
@@ -1082,8 +1095,6 @@
 
         function closeRiskWheelModal() {
             document.getElementById('risk-wheel-modal').classList.remove('active');
-            document.getElementById('spin-risk-btn').innerText = "Spin Wheel!";
-            document.getElementById('spin-risk-btn').onclick = spinRiskWheel;
             if (pendingGlobalEvent) {
                 showRulePopup(pendingGlobalEvent);
             } else {
@@ -1253,7 +1264,7 @@
                                 ${p.eliminated ? 'Eliminated' : 'Active'}
                             </button>
                         </div>
-                        <div class="grid grid-cols-2 gap-3">
+                        <div class="grid grid-cols-2 gap-2">
                             ${ballsHtml}
                         </div>
                     </div>
@@ -1280,7 +1291,7 @@
             document.getElementById('game-screen').classList.remove('active');
             resetGameLogic();
             buildWheelHTML();
-            buildRiskWheelRiskWheelHTML();
+            buildRiskWheelHTML();
             beginDraftTurn();
         }
 
