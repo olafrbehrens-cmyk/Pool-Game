@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pool Numbers Game</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #0f172a; color: white; font-family: system-ui, -apple-system, sans-serif; }
+        .screen { display: none; }
+        .screen.active { display: block; }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 50; justify-content: center; align-items: center; padding: 1rem; }
+        .modal.active { display: flex; }
+        #wheel-container { position: relative; width: 300px; height: 300px; margin: 0 auto; border-radius: 50%; border: 4px solid #334155; overflow: hidden; }
+        #wheel { width: 100%; height: 100%; border-radius: 50%; transition: transform 4s cubic-bezier(0.1, 0.7, 0.1, 1); }
+        .slice { position: absolute; top: 0; left: 0; width: 100%; height: 100%; clip-path: polygon(50% 50%, 50% 0%, 100% 0%, 100% 50%); transform-origin: 50% 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: white; text-shadow: 1px 1px 2px black; }
+        .pointer { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 25px solid white; z-index: 10; }
+        .pool-ball { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; cursor: pointer; border: 2px solid #fff; position: relative; overflow: hidden; box-shadow: inset -5px -5px 10px rgba(0,0,0,0.5); }
+        .pool-ball .circle { width: 30px; height: 30px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: black; z-index: 2; }
+        .ball-sunk { opacity: 0.3; pointer-events: none; }
+        .shake { animation: shake 0.5s; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <!-- SETUP SCREEN -->
+    <div id="setup-screen" class="screen active max-w-lg mx-auto space-y-6">
+        <h1 class="text-3xl font-bold text-center text-blue-400">Pool Numbers</h1>
+        
+        <!-- Drinking Rules -->
+        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold text-emerald-400">Drinking Rules & Stakes</h2>
+                <input type="checkbox" id="drink-toggle" class="w-6 h-6" checked onchange="toggleDrinking()">
+            </div>
+            <div id="drink-settings" class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm mb-1">Min Sips (per ball)</label>
+                        <input type="number" id="min-sips" value="1" min="1" class="w-full p-2 bg-slate-900 rounded text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm mb-1">Max Sips (per ball)</label>
+                        <input type="number" id="max-sips" value="7" min="1" class="w-full p-2 bg-slate-900 rounded text-white">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm mb-1">Loser's Penalty (All balls sunk)</label>
+                    <select id="loser-penalty" class="w-full p-2 bg-slate-900 rounded text-white">
+                        <option value="1 Sip">1 Sip</option>
+                        <option value="3 Sips">3 Sips</option>
+                        <option value="5 Sips">5 Sips</option>
+                        <option value="Half a Glass Down (Chug!)">Half a Glass Down (Chug!)</option>
+                        <option value="Full Glass Down (Chug!)" selected>Full Glass Down (Chug!)</option>
+                        <option value="Shot of Liquor">Shot of Liquor</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Match Setup -->
+        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
+            <h2 class="text-xl font-bold text-blue-400 mb-4">Match & Player Setup</h2>
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label class="block text-sm mb-1">Players (2-7)</label>
+                    <input type="number" id="player-count" value="2" min="2" max="7" class="w-full p-2 bg-slate-900 rounded" onchange="renderPlayerInputs()">
+                </div>
+                <div>
+                    <label class="block text-sm mb-1">Balls Each</label>
+                    <input type="number" id="balls-each" value="4" min="1" max="7" class="w-full p-2 bg-slate-900 rounded" onchange="renderPlayerInputs()">
+                </div>
+            </div>
+            <p id="rack-warning" class="text-red-400 text-sm hidden mb-4">Error: Players × Balls exceeds 15!</p>
+            <div id="player-inputs" class="space-y-3"></div>
+            <button onclick="startGame()" class="w-full mt-6 bg-blue-600 hover:bg-blue-500 py-3 rounded-xl font-bold text-lg">Start Draft</button>
+        </div>
+    </div>
+
+    <!-- DRAFT SCREEN -->
+    <div id="draft-screen" class="screen max-w-lg mx-auto text-center space-y-6">
+        <h2 class="text-2xl font-bold">Secret Draft</h2>
+        <p id="draft-status" class="text-lg text-blue-300"></p>
+        <div id="wheel-container">
+            <div class="pointer"></div>
+            <div id="wheel"></div>
+        </div>
+        <button id="spin-btn" onclick="spinWheel()" class="bg-emerald-600 px-8 py-3 rounded-xl font-bold text-xl w-full">Spin Wheel</button>
+        <div id="drafted-balls" class="flex justify-center gap-2 flex-wrap min-h-[60px]"></div>
+    </div>
+
+    <!-- GAME SCREEN -->
+    <div id="game-screen" class="screen max-w-2xl mx-auto space-y-6">
+        <div class="flex justify-between items-center bg-slate-800 p-4 rounded-xl">
+            <h2 class="text-2xl font-bold">Live Table</h2>
+            <select id="game-mode" class="bg-slate-900 p-2 rounded text-white border border-slate-700">
+                <option value="reveal">Reveal Mode</option>
+                <option value="secret">Secret / Mystery Mode</option>
+            </select>
+        </div>
+        
+        <div id="billiards-table" class="bg-green-800 p-6 rounded-2xl border-8 border-yellow-900 flex flex-wrap justify-center gap-4 shadow-2xl">
+            <!-- Balls generated here -->
+        </div>
+        
+        <button onclick="undoLastBall()" class="text-slate-400 underline text-sm w-full text-center">Undo Last Sunk Ball</button>
+
+        <div id="player-trays" class="grid grid-cols-2 gap-4">
+            <!-- Player trays with peek buttons -->
+        </div>
+    </div>
+
+    <!-- MODALS -->
+    <!-- Privacy Handoff -->
+    <div id="handoff-modal" class="modal">
+        <div class="bg-slate-800 p-8 rounded-xl text-center space-y-6 w-full max-w-md">
+            <h2 class="text-3xl font-bold text-red-400">Privacy Pass</h2>
+            <p id="handoff-text" class="text-xl">Hand the phone to Player.</p>
+            <button onclick="closeHandoff()" class="bg-blue-600 px-6 py-3 rounded-xl font-bold w-full">I am ready</button>
+        </div>
+    </div>
+
+    <!-- Keypad -->
+    <div id="keypad-modal" class="modal">
+        <div class="bg-slate-800 p-6 rounded-xl text-center space-y-4 w-full max-w-sm">
+            <h2 class="text-xl font-bold">Enter 4-Digit PIN</h2>
+            <p class="text-sm text-slate-400">Admin override: 1793</p>
+            <div id="pin-display" class="text-3xl tracking-[1em] font-mono h-12 bg-slate-900 flex items-center justify-center rounded"></div>
+            <div class="grid grid-cols-3 gap-2">
+                <button onclick="pressPin('1')" class="bg-slate-700 p-4 rounded text-xl">1</button>
+                <button onclick="pressPin('2')" class="bg-slate-700 p-4 rounded text-xl">2</button>
+                <button onclick="pressPin('3')" class="bg-slate-700 p-4 rounded text-xl">3</button>
+                <button onclick="pressPin('4')" class="bg-slate-700 p-4 rounded text-xl">4</button>
+                <button onclick="pressPin('5')" class="bg-slate-700 p-4 rounded text-xl">5</button>
+                <button onclick="pressPin('6')" class="bg-slate-700 p-4 rounded text-xl">6</button>
+                <button onclick="pressPin('7')" class="bg-slate-700 p-4 rounded text-xl">7</button>
+                <button onclick="pressPin('8')" class="bg-slate-700 p-4 rounded text-xl">8</button>
+                <button onclick="pressPin('9')" class="bg-slate-700 p-4 rounded text-xl">9</button>
+                <button onclick="pressPin('C')" class="bg-red-900 p-4 rounded text-xl">C</button>
+                <button onclick="pressPin('0')" class="bg-slate-700 p-4 rounded text-xl">0</button>
+                <button onclick="closeKeypad()" class="bg-slate-600 p-4 rounded text-sm">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Peek Hand -->
+    <div id="peek-modal" class="modal">
+        <div class="bg-slate-800 p-6 rounded-xl text-center space-y-4 w-full max-w-md border-4 border-blue-600">
+            <h2 id="peek-name" class="text-2xl font-bold">Your Hand</h2>
+            <p id="admin-badge" class="text-xs bg-red-600 text-white rounded px-2 py-1 hidden inline-block">Admin Override Used</p>
+            <p class="text-sm text-red-400">Auto-locking in <span id="peek-timer">5</span>s...</p>
+            <div id="peek-balls" class="flex flex-col gap-2 max-h-[50vh] overflow-y-auto p-2"></div>
+            <button onclick="closePeek()" class="bg-red-600 px-6 py-3 rounded-xl font-bold w-full">Hide & Lock Now</button>
+        </div>
+    </div>
+
+    <!-- Ball Sunk Alert -->
+    <div id="sunk-modal" class="modal">
+        <div class="bg-slate-800 p-8 rounded-xl text-center space-y-4 w-full max-w-sm border-2 border-slate-600">
+            <div id="sunk-ball-display" class="flex justify-center mb-4"></div>
+            <h2 id="sunk-title" class="text-2xl font-bold text-yellow-400">Ball Sunk!</h2>
+            <p id="sunk-desc" class="text-lg"></p>
+            <div id="sunk-drink-order" class="text-xl font-bold text-emerald-400 bg-emerald-900/30 p-3 rounded hidden"></div>
+            <button onclick="closeSunk()" class="bg-blue-600 px-6 py-2 rounded-xl font-bold w-full mt-4">Acknowledge</button>
+        </div>
+    </div>
+
+    <!-- Game Over -->
+    <div id="end-modal" class="modal">
+        <div class="bg-slate-800 p-8 rounded-xl text-center space-y-6 w-full max-w-md">
+            <h2 id="end-title" class="text-4xl font-bold">Game Over</h2>
+            <p id="end-desc" class="text-xl"></p>
+            <div class="space-y-3 pt-4 border-t border-slate-700">
+                <button onclick="rematchSame()" class="bg-emerald-600 px-6 py-3 rounded-xl font-bold w-full">Play Again (Same Squad & PINs)</button>
+                <button onclick="rematchModify()" class="bg-blue-600 px-6 py-3 rounded-xl font-bold w-full">Add / Modify Players</button>
+                <button onclick="location.reload()" class="bg-red-600 px-6 py-3 rounded-xl font-bold w-full">Brand New Game</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const ballColors = ["#facc15", "#2563eb", "#dc2626", "#4c1d95", "#ea580c", "#16a34a", "#7f1d1d", "#000000", "#facc15", "#2563eb", "#dc2626", "#4c1d95", "#ea580c", "#16a34a", "#7f1d1d"];
+        let players = [];
+        let availableBalls = [];
+        let tableBalls = [];
+        let currentPlayerDraftIndex = 0;
+        let ballsDraftedThisTurn = 0;
+        let ballsPerPlayer = 4;
+        let isDrinkingGame = true;
+        let minSips = 1, maxSips = 7;
+        let loserPenalty = "";
+        
+        let currentPinInput = "";
+        let playerToUnlock = null;
+        let peekInterval = null;
+        let historyLog = [];
+
+        function toggleDrinking() {
+            isDrinkingGame = document.getElementById('drink-toggle').checked;
+            document.getElementById('drink-settings').style.display = isDrinkingGame ? 'block' : 'none';
+        }
+
+        function renderPlayerInputs() {
+            const count = parseInt(document.getElementById('player-count').value);
+            ballsPerPlayer = parseInt(document.getElementById('balls-each').value);
+            const container = document.getElementById('player-inputs');
+            
+            if (count * ballsPerPlayer > 15) {
+                document.getElementById('rack-warning').classList.remove('hidden');
+                return;
+            } else {
+                document.getElementById('rack-warning').classList.add('hidden');
+            }
+
+            container.innerHTML = '';
+            for(let i=0; i<count; i++) {
+                const name = players[i] ? players[i].name : `Player ${i+1}`;
+                const pin = players[i] ? players[i].pin : ``;
+                container.innerHTML += `
+                    <div class="flex gap-2">
+                        <input type="text" id="p-name-${i}" value="${name}" placeholder="Name" class="flex-1 p-2 bg-slate-900 rounded">
+                        <input type="text" id="p-pin-${i}" value="${pin}" placeholder="4-Digit PIN" maxlength="4" class="w-32 p-2 bg-slate-900 rounded text-center" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                    </div>`;
+            }
+        }
+        
+        function drawWheel() {
+            const wheel = document.getElementById('wheel');
+            wheel.innerHTML = '';
+            const sliceAngle = 360 / 15;
+            for(let i = 0; i < 15; i++) {
+                const slice = document.createElement('div');
+                slice.className = 'slice';
+                slice.style.transform = `rotate(${i * sliceAngle}deg)`;
+                slice.style.backgroundColor = ballColors[i];
+                if(i >= 8 && i !== 7) { 
+                    slice.style.background = `repeating-linear-gradient(90deg, white, white 30%, ${ballColors[i]} 30%, ${ballColors[i]} 70%, white 70%, white 100%)`;
+                    slice.style.color = "black";
+                }
+                slice.innerHTML = `<span style="transform: rotate(90deg) translateX(80px);">${i+1}</span>`;
+                wheel.appendChild(slice);
+            }
+        }
+
+        function startGame() {
+            if(!document.getElementById('rack-warning').classList.contains('hidden')) return;
+            
+            isDrinkingGame = document.getElementById('drink-toggle').checked;
+            minSips = parseInt(document.getElementById('min-sips').value);
+            maxSips = parseInt(document.getElementById('max-sips').value);
+            loserPenalty = document.getElementById('loser-penalty').value;
+            
+            const count = parseInt(document.getElementById('player-count').value);
+            players = [];
+            for(let i=0; i<count; i++) {
+                const name = document.getElementById(`p-name-${i}`).value || `Player ${i+1}`;
+                const pin = document.getElementById(`p-pin-${i}`).value;
+                if(pin.length !== 4) { alert(`Please enter a 4-digit PIN for ${name}`); return; }
+                players.push({ name, pin, balls: [], eliminated: false });
+            }
+            
+            resetGameLogic();
+            drawWheel();
+            document.getElementById('setup-screen').classList.remove('active');
+            beginDraftTurn();
+        }
+
+        function resetGameLogic() {
+            availableBalls = Array.from({length: 15}, (_, i) => i + 1);
+            tableBalls = Array.from({length: 15}, (_, i) => ({ num: i + 1, sunk: false }));
+            historyLog = [];
+            players.forEach(p => { p.balls = []; p.eliminated = false; });
+            currentPlayerDraftIndex = 0;
+            ballsDraftedThisTurn = 0;
+        }
+
+        function beginDraftTurn() {
+            document.getElementById('draft-screen').classList.add('active');
+            ballsDraftedThisTurn = 0;
+            document.getElementById('drafted-balls').innerHTML = '';
+            document.getElementById('spin-btn').disabled = false;
+            updateDraftStatus();
+            
+            document.getElementById('handoff-text').innerText = `Hand the phone to ${players[currentPlayerDraftIndex].name}`;
+            document.getElementById('handoff-modal').classList.add('active');
+        }
+
+        function closeHandoff() {
+            document.getElementById('handoff-modal').classList.remove('active');
+        }
+
+        function updateDraftStatus() {
+            document.getElementById('draft-status').innerText = `${players[currentPlayerDraftIndex].name}: Drafting ball ${ballsDraftedThisTurn + 1} of ${ballsPerPlayer}`;
+        }
+
+        function spinWheel() {
+            if(ballsDraftedThisTurn >= ballsPerPlayer) return;
+            document.getElementById('spin-btn').disabled = true;
+            
+            const randomIndex = Math.floor(Math.random() * availableBalls.length);
+            const chosenBall = availableBalls[randomIndex];
+            availableBalls.splice(randomIndex, 1);
+            
+            // Random sips
+            const sips = isDrinkingGame ? Math.floor(Math.random() * (maxSips - minSips + 1)) + minSips : 0;
+            
+            const sliceAngle = 360 / 15;
+            const targetRotation = (360 * 5) - ((chosenBall - 1) * sliceAngle); 
+            
+            const wheel = document.getElementById('wheel');
+            wheel.style.transform = `rotate(${targetRotation}deg)`;
+            
+            setTimeout(() => {
+                players[currentPlayerDraftIndex].balls.push({ num: chosenBall, sips: sips, sunk: false });
+                ballsDraftedThisTurn++;
+                
+                const ballEl = createBallHTML(chosenBall);
+                document.getElementById('drafted-balls').innerHTML += ballEl;
+                
+                wheel.style.transition = 'none';
+                wheel.style.transform = `rotate(${targetRotation % 360}deg)`;
+                setTimeout(() => wheel.style.transition = 'transform 4s cubic-bezier(0.1, 0.7, 0.1, 1)', 50);
+
+                if(ballsDraftedThisTurn < ballsPerPlayer) {
+                    document.getElementById('spin-btn').disabled = false;
+                    updateDraftStatus();
+                } else {
+                    setTimeout(nextDraftPlayer, 1500);
+                }
+            }, 4100);
+        }
+
+        function createBallHTML(num) {
+            const idx = num - 1;
+            const bg = (num > 8) ? `repeating-linear-gradient(90deg, white, white 25%, ${ballColors[idx]} 25%, ${ballColors[idx]} 75%, white 75%, white 100%)` : ballColors[idx];
+            const col = (num === 8) ? 'white' : 'black';
+            return `<div class="pool-ball" style="background: ${bg};"><div class="circle" style="color:${col}">${num}</div></div>`;
+        }
+
+        function nextDraftPlayer() {
+            document.getElementById('draft-screen').classList.remove('active');
+            currentPlayerDraftIndex++;
+            if(currentPlayerDraftIndex < players.length) {
+                beginDraftTurn();
+            } else {
+                initGameScreen();
+            }
+        }
+
+        function initGameScreen() {
+            document.getElementById('game-screen').classList.add('active');
+            renderTable();
+            renderPlayerTrays();
+        }
+
+        function renderTable() {
+            const table = document.getElementById('billiards-table');
+            table.innerHTML = '';
+            tableBalls.forEach(tb => {
+                const wrapper = document.createElement('div');
+                wrapper.innerHTML = createBallHTML(tb.num);
+                if(tb.sunk) wrapper.firstChild.classList.add('ball-sunk');
+                wrapper.onclick = () => handleBallClick(tb);
+                table.appendChild(wrapper.firstChild);
+            });
+        }
+
+        function renderPlayerTrays() {
+            const trays = document.getElementById('player-trays');
+            trays.innerHTML = '';
+            players.forEach((p, idx) => {
+                trays.innerHTML += `
+                    <div class="bg-slate-700 p-4 rounded-xl text-center border-t-4 ${p.eliminated ? 'border-red-600 opacity-50' : 'border-blue-500'}">
+                        <h3 class="font-bold mb-2">${p.name}</h3>
+                        <button onclick="openKeypad(${idx})" class="bg-slate-800 border border-slate-600 px-4 py-2 rounded text-sm w-full hover:bg-slate-600 flex items-center justify-center gap-2">
+                            🔒 Peek Hand
+                        </button>
+                    </div>`;
+            });
+        }
+
+        function handleBallClick(tableBall) {
+            if(tableBall.sunk) return;
+            tableBall.sunk = true;
+            historyLog.push(tableBall.num);
+            
+            let owner = null;
+            let playerBallInfo = null;
+            
+            players.forEach(p => {
+                const b = p.balls.find(x => x.num === tableBall.num);
+                if(b) { owner = p; playerBallInfo = b; b.sunk = true; }
+            });
+
+            renderTable();
+            checkWinCondition();
+
+            if(owner) {
+                const liveCount = owner.balls.filter(b => !b.sunk).length;
+                const isEliminated = liveCount === 0;
+                owner.eliminated = isEliminated;
+                renderPlayerTrays();
+                showSunkModal(owner, playerBallInfo, liveCount, isEliminated);
+            }
+        }
+
+        function undoLastBall() {
+            if(historyLog.length === 0) return;
+            const lastNum = historyLog.pop();
+            const tb = tableBalls.find(b => b.num === lastNum);
+            tb.sunk = false;
+            
+            players.forEach(p => {
+                const pb = p.balls.find(x => x.num === lastNum);
+                if(pb) pb.sunk = false;
+                p.eliminated = p.balls.filter(b => !b.sunk).length === 0;
+            });
+            renderTable();
+            renderPlayerTrays();
+        }
+
+        function showSunkModal(owner, ballInfo, liveCount, isEliminated) {
+            const mode = document.getElementById('game-mode').value;
+            const title = document.getElementById('sunk-title');
+            const desc = document.getElementById('sunk-desc');
+            const drink = document.getElementById('sunk-drink-order');
+            document.getElementById('sunk-ball-display').innerHTML = createBallHTML(ballInfo.num);
+            
+            drink.classList.add('hidden');
+            
+            if(mode === 'reveal') {
+                title.innerText = `${owner.name}'s ball!`;
+                desc.innerText = isEliminated ? `0 balls remaining! Eliminated!` : `${liveCount} balls left in play.`;
+                
+                if(isDrinkingGame) {
+                    drink.classList.remove('hidden');
+                    drink.innerText = isEliminated 
+                        ? `LOSER PENALTY: ${loserPenalty}` 
+                        : `${owner.name} must take ${ballInfo.sips} Sips!`;
+                }
+            } else {
+                title.innerText = `Mystery Ball Sunk!`;
+                desc.innerText = `Someone just took a hit...`;
+                if(isDrinkingGame) {
+                    drink.classList.remove('hidden');
+                    drink.innerText = `Owner takes ${ballInfo.sips} Sips! (Secret)`;
+                }
+            }
+            document.getElementById('sunk-modal').classList.add('active');
+        }
+
+        function closeSunk() { document.getElementById('sunk-modal').classList.remove('active'); checkEndGame(); }
+
+        function checkWinCondition() {
+            const activeTableBalls = tableBalls.filter(b => !b.sunk).length;
+            const livePlayers = players.filter(p => !p.eliminated);
+            
+            if(activeTableBalls === 0 || livePlayers.length === 0) {
+                // Table cleared but no single winner = Mutual Loss
+                triggerGameOver(null, true);
+            } else if(activeTableBalls === 1 && livePlayers.length === 1) {
+                // One ball left on table AND it belongs to the 1 live player = Clean Win
+                triggerGameOver(livePlayers[0], false);
+            }
+        }
+
+        function checkEndGame() {
+            const activeTableBalls = tableBalls.filter(b => !b.sunk).length;
+            const livePlayers = players.filter(p => !p.eliminated);
+            if(activeTableBalls <= 1 || livePlayers.length === 0) checkWinCondition();
+        }
+
+        function triggerGameOver(winner, mutualLoss) {
+            document.getElementById('end-modal').classList.add('active');
+            const title = document.getElementById('end-title');
+            const desc = document.getElementById('end-desc');
+            
+            if(mutualLoss) {
+                title.innerText = "Mutual Loss!";
+                title.className = "text-4xl font-bold text-red-500";
+                desc.innerHTML = isDrinkingGame 
+                    ? `Double Sink or Table Cleared!<br>Both players drink: <b>${loserPenalty}</b>` 
+                    : `Double Sink! Nobody wins!`;
+            } else {
+                title.innerText = `${winner.name} Wins!`;
+                title.className = "text-4xl font-bold text-emerald-400";
+                desc.innerText = `Last Ball Standing!`;
+            }
+        }
+
+        function openKeypad(playerIdx) {
+            playerToUnlock = players[playerIdx];
+            currentPinInput = "";
+            document.getElementById('pin-display').innerText = "";
+            document.getElementById('keypad-modal').classList.add('active');
+        }
+
+        function pressPin(val) {
+            if(val === 'C') { currentPinInput = ""; }
+            else if(currentPinInput.length < 4) { currentPinInput += val; }
+            document.getElementById('pin-display').innerText = "•".repeat(currentPinInput.length);
+            
+            if(currentPinInput.length === 4) {
+                setTimeout(checkPin, 200);
+            }
+        }
+
+        function checkPin() {
+            const adminUsed = currentPinInput === "1793";
+            if(currentPinInput === playerToUnlock.pin || adminUsed) {
+                closeKeypad();
+                showPeek(adminUsed);
+            } else {
+                const kp = document.getElementById('keypad-modal').firstElementChild;
+                kp.classList.add('shake');
+                setTimeout(() => kp.classList.remove('shake'), 500);
+                currentPinInput = "";
+                document.getElementById('pin-display').innerText = "";
+            }
+        }
+
+        function closeKeypad() { document.getElementById('keypad-modal').classList.remove('active'); }
+
+        function showPeek(adminUsed) {
+            document.getElementById('peek-modal').classList.add('active');
+            document.getElementById('peek-name').innerText = `${playerToUnlock.name}'s Hand`;
+            document.getElementById('admin-badge').style.display = adminUsed ? 'inline-block' : 'none';
+            
+            const ballsDiv = document.getElementById('peek-balls');
+            ballsDiv.innerHTML = '';
+            playerToUnlock.balls.forEach(b => {
+                ballsDiv.innerHTML += `
+                    <div class="flex items-center justify-between bg-slate-900 p-3 rounded border ${b.sunk ? 'border-red-900 opacity-50' : 'border-emerald-600'}">
+                        <div class="flex items-center gap-3">
+                            <div class="scale-50 origin-left">${createBallHTML(b.num)}</div>
+                            <span class="font-bold ${b.sunk ? 'text-red-400' : 'text-emerald-400'}">${b.sunk ? 'SUNK' : 'ALIVE'}</span>
+                        </div>
+                        ${isDrinkingGame ? `<span class="text-slate-300 text-sm">${b.sips} Sips</span>` : ''}
+                    </div>`;
+            });
+            
+            let timeLeft = 5;
+            document.getElementById('peek-timer').innerText = timeLeft;
+            clearInterval(peekInterval);
+            peekInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('peek-timer').innerText = timeLeft;
+                if(timeLeft <= 0) closePeek();
+            }, 1000);
+        }
+
+        function closePeek() {
+            clearInterval(peekInterval);
+            document.getElementById('peek-modal').classList.remove('active');
+        }
+
+        function rematchSame() {
+            document.getElementById('end-modal').classList.remove('active');
+            document.getElementById('game-screen').classList.remove('active');
+            resetGameLogic();
+            drawWheel();
+            beginDraftTurn();
+        }
+
+        function rematchModify() {
+            document.getElementById('end-modal').classList.remove('active');
+            document.getElementById('game-screen').classList.remove('active');
+            document.getElementById('setup-screen').classList.add('active');
+        }
+
+        renderPlayerInputs();
+    </script>
+</body>
+</html>
