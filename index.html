@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Olaf's Pool Game v1.6.2</title>
+    <title>Olaf's Pool Game v1.6.2 beta</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
     <style>
@@ -15,7 +15,7 @@
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 50; justify-content: center; align-items: center; padding: 1rem; backdrop-filter: blur(8px); }
         .modal.active { display: flex; }
         
-        /* Premium Gradients */
+        /* Gradients */
         .bg-drinking { background: linear-gradient(135deg, #ec4899, #8b5cf6); }
         .bg-normal { background: linear-gradient(135deg, #3b82f6, #1e40af); }
         .bg-dark-glass { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(15px); }
@@ -63,7 +63,7 @@
     <div id="landing-screen" class="screen active max-w-md mx-auto px-6 py-12 text-center space-y-10">
         <div class="space-y-4 pt-8">
             <div class="text-6xl mx-auto drop-shadow-md">🎱</div>
-            <h1 class="text-4xl font-black tracking-tight text-slate-800">Olaf's Pool Game <span class="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-md font-mono">v1.6.1</span></h1>
+            <h1 class="text-4xl font-black tracking-tight text-slate-800">Olaf's Pool Game <span class="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-md font-mono">v1.6.2 beta</span></h1>
             <p class="text-slate-500 font-semibold text-lg">Secret balls. Real shots. Big consequences.</p>
         </div>
         <div class="space-y-6">
@@ -91,26 +91,17 @@
             <h3 class="font-black text-lg flex items-center gap-2"><span class="text-xl">📋</span> Game Rules</h3>
             
             <div id="drink-settings" class="space-y-6 border-b border-slate-100 pb-6">
-                <!-- Hardcore Drinking Mode Toggle -->
-                <div class="bg-pink-50 border border-pink-200 p-4 rounded-2xl flex items-center justify-between">
-                    <div>
-                        <p class="font-black text-sm text-pink-700">🔥 Hardcore Drinking Mode</p>
-                        <p class="text-xs text-pink-500 font-semibold">Doubles sips & intensifies penalties</p>
-                    </div>
-                    <input type="checkbox" id="hardcore-toggle" class="w-6 h-6 accent-pink-600 cursor-pointer">
-                </div>
-
                 <div>
                     <label class="block text-sm font-bold text-slate-500 mb-4">Min / Max Sips per Ball</label>
                     <div class="flex items-center gap-4">
                         <div class="flex-1">
                             <span class="text-xs text-slate-400 font-bold ml-1">MIN</span>
-                            <input type="range" id="min-sips" min="1" max="10" value="1" class="w-full accent-blue-600" oninput="document.getElementById('min-val').innerText = this.value">
+                            <input type="range" id="min-sips" min="1" max="10" value="1" class="w-full accent-blue-600" oninput="syncSipSliders('min')">
                             <div id="min-val" class="text-center font-bold text-blue-600 mt-1">1</div>
                         </div>
                         <div class="flex-1">
                             <span class="text-xs text-slate-400 font-bold ml-1">MAX</span>
-                            <input type="range" id="max-sips" min="1" max="10" value="5" class="w-full accent-blue-600" oninput="document.getElementById('max-val').innerText = this.value">
+                            <input type="range" id="max-sips" min="1" max="10" value="5" class="w-full accent-blue-600" oninput="syncSipSliders('max')">
                             <div id="max-val" class="text-center font-bold text-blue-600 mt-1">5</div>
                         </div>
                     </div>
@@ -204,7 +195,7 @@
     <!-- 4. GAME SCREEN -->
     <div id="game-screen" class="screen max-w-4xl mx-auto px-4 py-6 space-y-6">
         <div class="flex justify-between items-center bg-white p-4 rounded-2xl shadow-sm border border-slate-100 relative">
-            <h2 class="text-xl font-black flex items-center gap-2"><span>🎱</span> Olaf's Pool Game <span class="text-xs bg-slate-100 px-2 py-0.5 rounded font-mono">v1.6.1</span></h2>
+            <h2 class="text-xl font-black flex items-center gap-2"><span>🎱</span> Olaf's Pool Game <span class="text-xs bg-slate-100 px-2 py-0.5 rounded font-mono">v1.6.2 beta</span></h2>
             
             <div class="flex items-center gap-3">
                 <div id="mode-badge" class="bg-drinking px-4 py-1.5 rounded-full text-white text-xs font-bold shadow-sm">Drinking Game</div>
@@ -356,7 +347,7 @@
     <!-- Risk Wheel Modal -->
     <div id="risk-wheel-modal" class="modal">
         <div class="bg-slate-900 p-6 rounded-3xl text-center space-y-4 w-full max-w-sm border-2 border-amber-500 shadow-2xl relative">
-            <button onclick="forceJackpotNextSpin()" class="absolute top-4 left-4 w-6 h-6 bg-slate-800 rounded-md opacity-50 cursor-default" title=""></button>
+            <button onclick="forceJackpotNextSpin()" class="absolute top-4 left-4 w-6 h-6 bg-slate-700/50 hover:bg-slate-700/70 rounded-md cursor-pointer border border-slate-600/30" title=""></button>
             
             <h2 class="text-2xl font-black text-amber-400">🔥 Risk Wheel Gamble</h2>
             <p class="text-xs font-bold text-slate-400">50% Red (Double) | 40% Green (Give Sips) | 10% Gold Jackpot (Give Double)!</p>
@@ -379,7 +370,7 @@
         </div>
     </div>
 
-    <!-- Rule Popup Modal met Lava Timer ingesluit -->
+    <!-- Rule Popup Modal met The Floor is Lava Stem & Timer -->
     <div id="rule-popup-modal" class="modal">
         <div class="bg-gradient-to-br from-purple-900 via-pink-900 to-slate-900 p-8 rounded-3xl text-center space-y-6 w-full max-w-sm border-2 border-pink-500 shadow-[0_0_30px_rgba(236,72,153,0.5)] relative">
             <button onclick="closeRulePopup()" class="absolute top-4 right-4 text-pink-300 hover:text-white text-2xl font-bold">×</button>
@@ -391,8 +382,8 @@
             <p id="rule-popup-desc" class="text-sm font-semibold text-pink-100 bg-white/10 p-4 rounded-2xl backdrop-blur-md"></p>
             
             <div id="lava-timer-container" class="space-y-2 hidden">
-                <p class="text-xs font-bold text-amber-300">Time Remaining to Lift Feet:</p>
-                <div id="lava-timer-display" class="text-5xl font-mono font-black text-amber-400">5</div>
+                <p class="text-xs font-bold text-amber-300">Feet off the floor in:</p>
+                <div id="lava-timer-display" class="text-6xl font-mono font-black text-amber-400 animate-pulse">5</div>
             </div>
 
             <button onclick="closeRulePopup()" class="w-full bg-pink-600 hover:bg-pink-500 text-white py-4 rounded-xl font-black text-lg transition shadow-lg">Let's Go!</button>
@@ -511,15 +502,44 @@
                     gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
                     osc.start(now); osc.stop(now + 0.4);
                 } else if (type === 'buzzer') {
-                    triggerHaptic([200, 100, 200]);
+                    triggerHaptic([300, 150, 300]);
                     osc.type = 'sawtooth';
                     osc.frequency.setValueAtTime(110, now);
-                    osc.frequency.setValueAtTime(116.54, now + 0.15);
-                    gain.gain.setValueAtTime(0.4, now);
-                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
-                    osc.start(now); osc.stop(now + 0.6);
+                    osc.frequency.setValueAtTime(105, now + 0.2);
+                    gain.gain.setValueAtTime(0.6, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.8);
+                    osc.start(now); osc.stop(now + 0.8);
                 }
             } catch(e) { console.log('Audio disabled'); }
+        }
+
+        function speakLoud(text) {
+            try {
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel();
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.rate = 1.1;
+                    utterance.pitch = 1.0;
+                    utterance.volume = 1.0;
+                    window.speechSynthesis.speak(utterance);
+                }
+            } catch(e) {}
+        }
+
+        function syncSipSliders(changed) {
+            let minEl = document.getElementById('min-sips');
+            let maxEl = document.getElementById('max-sips');
+            let minVal = parseInt(minEl.value);
+            let maxVal = parseInt(maxEl.value);
+
+            if (changed === 'min' && minVal > maxVal) {
+                maxEl.value = minVal;
+            } else if (changed === 'max' && maxVal < minVal) {
+                minEl.value = maxVal;
+            }
+
+            document.getElementById('min-val').innerText = minEl.value;
+            document.getElementById('max-val').innerText = maxEl.value;
         }
 
         function toggleDangerousSettings(val) {
@@ -557,6 +577,7 @@
         }
 
         function selectGameMode(mode) {
+            getAudioContext();
             isDrinkingGame = (mode === 'drinking');
             document.getElementById('landing-screen').classList.remove('active');
             document.getElementById('setup-screen').classList.add('active');
@@ -600,7 +621,7 @@
                         <select id="p-avatar-${i}" class="form-input w-16 text-center text-xl bg-slate-50 cursor-pointer p-2">
                             ${avatarList.map(a => `<option value="${a}" ${a === avatar ? 'selected' : ''}>${a}</option>`).join('')}
                         </select>
-                        <input type="text" id="p-name-${i}" value="${name}" placeholder="Name" class="form-input flex-1">
+                        <input type="text" id="p-name-${i}" value="${name}" placeholder="Name" class="form-input flex-1 truncate">
                         <input type="password" inputmode="numeric" pattern="[0-9]*" id="p-pin-${i}" value="${pin}" placeholder="PIN" maxlength="4" class="form-input w-24 text-center tracking-widest font-mono font-bold" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                     </div>`;
             }
@@ -713,6 +734,7 @@
             shotHistoryRecords = [];
             suddenDeathAlertShown = false;
             clearInterval(lavaTimerInterval);
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
             players.forEach(p => { p.balls = []; p.eliminated = false; });
             currentPlayerDraftIndex = 0;
             ballsDraftedThisTurn = 0;
@@ -742,7 +764,8 @@
 
         function spinWheel() {
             if(ballsDraftedThisTurn >= ballsPerPlayer) return;
-            document.getElementById('spin-btn').disabled = true;
+            const spinBtn = document.getElementById('spin-btn');
+            spinBtn.disabled = true;
             
             const randomIndex = Math.floor(Math.random() * availableBalls.length);
             const chosenBall = availableBalls[randomIndex];
@@ -878,11 +901,11 @@
                 trays.innerHTML += `
                     <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between ${isEliminated ? 'opacity-50 grayscale' : ''}">
                         <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-2">
-                            <div class="flex items-center gap-2">
-                                <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-lg">${p.avatar}</div>
-                                <h3 class="font-black text-slate-800 text-lg">${p.name}</h3>
+                            <div class="flex items-center gap-2 overflow-hidden">
+                                <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-lg flex-shrink-0">${p.avatar}</div>
+                                <h3 class="font-black text-slate-800 text-lg truncate max-w-[150px]">${p.name}</h3>
                             </div>
-                            <div class="flex items-center gap-1">
+                            <div class="flex items-center gap-1 flex-shrink-0">
                                 <div class="w-2 h-2 rounded-full ${isEliminated ? 'bg-red-500' : 'bg-emerald-500'}"></div>
                                 <span class="text-xs font-bold ${isEliminated ? 'text-red-500' : 'text-emerald-500'}">${isEliminated ? 'Eliminated' : 'Online'}</span>
                             </div>
@@ -970,14 +993,14 @@
             if (shotHistoryRecords.length === 0) {
                 container.innerHTML = '<p class="text-slate-400 text-center py-4">No balls sunk yet.</p>';
             } else {
-                shotHistoryRecords.slice().reverse().forEach((record, index) => {
+                shotHistoryRecords.slice().reverse().forEach((record) => {
                     container.innerHTML += `
                         <div class="flex items-center justify-between bg-slate-50 p-3 rounded-xl border border-slate-100">
-                            <div class="flex items-center gap-2">
-                                <span class="text-xl">${record.avatar}</span>
-                                <span class="font-bold text-slate-800">${record.player}</span>
+                            <div class="flex items-center gap-2 overflow-hidden">
+                                <span class="text-xl flex-shrink-0">${record.avatar}</span>
+                                <span class="font-bold text-slate-800 truncate max-w-[160px]">${record.player}</span>
                             </div>
-                            <span class="font-black text-blue-600 bg-blue-50 px-2 py-1 rounded-lg text-xs">Ball #${record.ballNum}</span>
+                            <span class="font-black text-blue-600 bg-blue-50 px-2 py-1 rounded-lg text-xs flex-shrink-0">Ball #${record.ballNum}</span>
                         </div>
                     `;
                 });
@@ -1041,6 +1064,7 @@
 
         function forceJackpotNextSpin() {
             isJackpotForced = true;
+            triggerHaptic(60);
         }
 
         function openRiskWheelModal() {
@@ -1052,7 +1076,8 @@
         }
 
         function spinRiskWheel() {
-            document.getElementById('spin-risk-btn').disabled = true;
+            const spinBtn = document.getElementById('spin-risk-btn');
+            spinBtn.disabled = true;
             const riskWheel = document.getElementById('risk-wheel');
             
             let randomIdx;
@@ -1091,9 +1116,9 @@
                     lastSunkBallInfo.sips *= 2;
                     renderPlayerTrays();
                     document.getElementById('risk-result-text').innerHTML = `🔴 RED HIT! <span class="text-red-400">Drink Double (${lastSunkBallInfo.sips} Sips)!</span>`;
-                    document.getElementById('spin-risk-btn').innerText = "Spin Again / Close";
-                    document.getElementById('spin-risk-btn').disabled = false;
-                    document.getElementById('spin-risk-btn').onclick = closeRiskWheelModal;
+                    spinBtn.innerText = "Spin Again / Close";
+                    spinBtn.disabled = false;
+                    spinBtn.onclick = closeRiskWheelModal;
                 } else if (outcome.type === 'give') {
                     document.getElementById('risk-result-text').innerHTML = `🟢 GREEN HIT! <span class="text-emerald-400">Give your sips to someone!</span>`;
                     targetLabel.innerText = "🎉 GREEN HIT! Choose who takes your sips:";
@@ -1122,8 +1147,20 @@
 
         function closeRiskWheelModal() {
             document.getElementById('risk-wheel-modal').classList.remove('active');
-            document.getElementById('spin-risk-btn').innerText = "Spin Wheel!";
-            document.getElementById('spin-risk-btn').onclick = spinRiskWheel;
+            const spinBtn = document.getElementById('spin-risk-btn');
+            spinBtn.innerText = "Spin Wheel!";
+            spinBtn.onclick = spinRiskWheel;
+            if (pendingGlobalEvent) {
+                showRulePopup(pendingGlobalEvent);
+            } else {
+                checkEndGame();
+            }
+        }
+
+        function proceedToEventOrClose() {
+            document.getElementById('sunk-modal').classList.remove('active');
+            document.getElementById('risk-wheel-prompt-box').classList.add('hidden');
+            
             if (pendingGlobalEvent) {
                 showRulePopup(pendingGlobalEvent);
             } else {
@@ -1137,20 +1174,27 @@
             document.getElementById('rule-popup-desc').innerText = ruleDescriptions[ruleName] || 'New party rule activated!';
             
             const timerContainer = document.getElementById('lava-timer-container');
-            if(timerContainer) timerContainer.classList.add('hidden');
+            timerContainer.classList.add('hidden');
             clearInterval(lavaTimerInterval);
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
 
             if (ruleName === 'The Floor is Lava') {
-                if(timerContainer) timerContainer.classList.remove('hidden');
+                timerContainer.classList.remove('hidden');
                 let timeLeft = 5;
                 document.getElementById('lava-timer-display').innerText = timeLeft;
+                speakLoud("The floor is lava! " + timeLeft);
+                
                 lavaTimerInterval = setInterval(() => {
                     timeLeft--;
-                    document.getElementById('lava-timer-display').innerText = timeLeft;
-                    playSound('tick');
-                    if(timeLeft <= 0) {
+                    if(timeLeft > 0) {
+                        document.getElementById('lava-timer-display').innerText = timeLeft;
+                        playSound('tick');
+                        speakLoud(timeLeft.toString());
+                    } else if(timeLeft === 0) {
+                        document.getElementById('lava-timer-display').innerText = "0";
                         clearInterval(lavaTimerInterval);
                         playSound('buzzer');
+                        speakLoud("Time's up!");
                     }
                 }, 1000);
             }
@@ -1160,6 +1204,7 @@
 
         function closeRulePopup() {
             clearInterval(lavaTimerInterval);
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
             document.getElementById('rule-popup-modal').classList.remove('active');
             pendingGlobalEvent = null;
             checkEndGame();
@@ -1298,12 +1343,12 @@
                             <select onchange="adminUpdateAvatar(${pIdx}, this.value)" class="p-1 text-lg bg-white border rounded">
                                 ${avatarList.map(a => `<option value="${a}" ${a === p.avatar ? 'selected' : ''}>${a}</option>`).join('')}
                             </select>
-                            <input type="text" value="${p.name}" onchange="adminUpdateName(${pIdx}, this.value)" class="form-input flex-1 py-1 px-3 text-sm">
+                            <input type="text" value="${p.name}" onchange="adminUpdateName(${pIdx}, this.value)" class="form-input flex-1 py-1 px-3 text-sm truncate">
                             <button onclick="adminToggleElimination(${pIdx})" class="px-3 py-1 rounded text-xs font-bold ${p.eliminated ? 'bg-red-100 text-red-600' : 'bg-emerald-100 text-emerald-600'}">
                                 ${p.eliminated ? 'Eliminated' : 'Active'}
                             </button>
                         </div>
-                        <div class="grid grid-cols-2 gap-2">
+                        <div class="grid grid-cols-2 gap-3">
                             ${ballsHtml}
                         </div>
                     </div>
