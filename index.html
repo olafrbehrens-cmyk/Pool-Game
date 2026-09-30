@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pool Numbers</title>
+    <title>Pool Numbers v1.6</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
     <style>
@@ -20,7 +20,7 @@
         .bg-normal { background: linear-gradient(135deg, #3b82f6, #1e40af); }
         .bg-dark-glass { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(15px); }
 
-        /* Wheel Overhaul */
+        /* Wheel Styling */
         #wheel-container { position: relative; width: 300px; height: 300px; margin: 0 auto; border-radius: 50%; border: 12px solid #cbd5e1; box-shadow: 0 10px 25px rgba(0,0,0,0.1), inset 0 0 15px rgba(0,0,0,0.3); background: white; }
         #wheel { width: 100%; height: 100%; border-radius: 50%; transition: transform 4s cubic-bezier(0.1, 0.7, 0.1, 1); position: relative; overflow: hidden; }
         .slice { position: absolute; width: 62px; height: 50%; left: calc(50% - 31px); top: 0; transform-origin: bottom center; display: flex; justify-content: center; padding-top: 10px; font-weight: 900; font-size: 1.25rem; text-shadow: 0px 1px 3px rgba(255,255,255,0.8); clip-path: polygon(0 0, 100% 0, 50% 100%); }
@@ -31,30 +31,27 @@
         .wheel-peg { position: absolute; width: 36px; height: 36px; background: #1e293b; border-radius: 50%; top: calc(50% - 18px); left: calc(50% - 18px); z-index: 10; border: 3px solid #64748b; box-shadow: 0 4px 6px rgba(0,0,0,0.5); }
         .pointer { position: absolute; top: -18px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 18px solid transparent; border-right: 18px solid transparent; border-top: 30px solid #3b82f6; z-index: 20; filter: drop-shadow(0 4px 4px rgba(0,0,0,0.3)); }
 
-        /* Draft Tray */
         #drafted-balls-tray { min-height: 72px; background: #f1f5f9; border-radius: 1rem; border: 2px dashed #cbd5e1; display: flex; justify-content: center; align-items: center; gap: 8px; padding: 12px; flex-wrap: wrap; }
 
-        /* Realistic Pool Table */
-        #billiards-table { background: #155e30; border: 18px solid #78350f; border-radius: 16px; box-shadow: inset 0 0 30px rgba(0,0,0,0.6), 0 10px 25px rgba(0,0,0,0.15); position: relative; }
-        
-        /* 3D Pool Balls */
+        /* Pool Table & Glow */
+        #billiards-table { background: #155e30; border: 18px solid #78350f; border-radius: 16px; box-shadow: inset 0 0 30px rgba(0,0,0,0.6), 0 10px 25px rgba(0,0,0,0.15); position: relative; transition: box-shadow 0.3s ease; }
+        .sudden-death-glow { box-shadow: inset 0 0 30px rgba(0,0,0,0.6), 0 0 25px rgba(239, 68, 68, 0.8) !important; border-color: #991b1b !important; }
+
+        /* Pool Balls */
         .pool-ball { width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; box-shadow: inset -6px -6px 12px rgba(0,0,0,0.5), inset 3px 3px 8px rgba(255,255,255,0.6), 2px 4px 6px rgba(0,0,0,0.3); overflow: hidden; flex-shrink: 0; }
         .pool-ball::after { content: ''; position: absolute; top: 8%; left: 18%; width: 25%; height: 25%; background: radial-gradient(circle, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0) 70%); border-radius: 50%; z-index: 4; }
         .pool-ball .circle { width: 26px; height: 26px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: black; font-weight: 900; font-size: 1rem; z-index: 3; box-shadow: inset 0 0 3px rgba(0,0,0,0.2); }
         .stripe-bg { position: absolute; inset: 0; z-index: 1; }
         .ball-sunk { opacity: 0.15; filter: grayscale(100%); pointer-events: none; }
 
-        /* Hidden Ball Placeholder */
         .hidden-ball { width: 44px; height: 44px; border-radius: 50%; background: #e2e8f0; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-weight: 800; font-size: 1.2rem; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); border: 2px solid #cbd5e1; flex-shrink: 0; }
         .revealed-ball-container { display: flex; flex-direction: column; align-items: center; gap: 4px; }
         
-        /* Inputs & UI */
         .form-input { width: 100%; padding: 12px 16px; border-radius: 12px; border: 2px solid #e2e8f0; font-weight: 600; outline: none; transition: border-color 0.2s; background: white; }
         .form-input:focus { border-color: #3b82f6; }
         .pin-dot { width: 16px; height: 16px; border-radius: 50%; border: 2px solid white; transition: background-color 0.2s; }
         .pin-dot.filled { background-color: white; }
         
-        /* Animations */
         .flip-in { animation: flipIn 0.5s ease-out forwards; }
         @keyframes flipIn { 0% { transform: rotateY(90deg); opacity: 0; } 100% { transform: rotateY(0deg); opacity: 1; } }
         .shake { animation: shake 0.4s; }
@@ -68,7 +65,7 @@
     <div id="landing-screen" class="screen active max-w-md mx-auto px-6 py-12 text-center space-y-10">
         <div class="space-y-4 pt-8">
             <div class="text-6xl mx-auto drop-shadow-md">🎱</div>
-            <h1 class="text-4xl font-black tracking-tight text-slate-800">Pool Games</h1>
+            <h1 class="text-4xl font-black tracking-tight text-slate-800">Pool Numbers <span class="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-md font-mono">v1.6</span></h1>
             <p class="text-slate-500 font-semibold text-lg">Secret balls. Real shots. Big consequences.</p>
         </div>
         <div class="space-y-6">
@@ -94,6 +91,7 @@
 
         <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-6">
             <h3 class="font-black text-lg flex items-center gap-2"><span class="text-xl">📋</span> Game Rules</h3>
+            
             <div id="drink-settings" class="space-y-6 border-b border-slate-100 pb-6">
                 <div>
                     <label class="block text-sm font-bold text-slate-500 mb-4">Min / Max Sips per Ball</label>
@@ -110,6 +108,7 @@
                         </div>
                     </div>
                 </div>
+
                 <div>
                     <label class="block text-sm font-bold text-slate-500 mb-2">Loser's Penalty</label>
                     <select id="loser-penalty" class="form-input text-slate-800 bg-slate-50 cursor-pointer">
@@ -121,7 +120,29 @@
                         <option value="Shot of Liquor">Shot of Liquor</option>
                     </select>
                 </div>
+
+                <!-- Let's Get Dangerous Global Events Toggle & Rules -->
+                <div class="pt-2 border-t border-slate-100">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="font-black text-sm text-slate-700 flex items-center gap-1.5">⚡ Let's Get Dangerous</span>
+                        <input type="checkbox" id="dangerous-toggle" checked class="w-5 h-5 accent-pink-500 cursor-pointer" onchange="toggleDangerousSettings(this.checked)">
+                    </div>
+                    <div id="dangerous-rules-container" class="space-y-2 bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 max-h-48 overflow-y-auto">
+                        <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="rule-chk accent-pink-500" value="8-Ball Special" checked> 🎱 8-Ball Special</label>
+                        <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="rule-chk accent-pink-500" value="Left-Handed Only" checked> 👈 Left-Handed Only</label>
+                        <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="rule-chk accent-pink-500" value="Waterfall" checked> 🌊 Waterfall</label>
+                        <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="rule-chk accent-pink-500" value="The Buffalo Rule" checked> 🐃 The Buffalo Rule</label>
+                        <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="rule-chk accent-pink-500" value="Give a Sip" checked> 🎁 Give a Sip</label>
+                        <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="rule-chk accent-pink-500" value="No Names (Question Master)" checked> 🤐 No Names (Question Master)</label>
+                        <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="rule-chk accent-pink-500" value="Thumb Master" checked> 👍 Thumb Master</label>
+                        <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="rule-chk accent-pink-500" value="Rhyme Time" checked> 🎵 Rhyme Time</label>
+                        <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="rule-chk accent-pink-500" value="The Floor is Lava" checked> 🌋 The Floor is Lava (w/ Timer & Buzzer)</label>
+                        <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="rule-chk accent-pink-500" value="Category Game" checked> 🧠 Category Game</label>
+                        <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="rule-chk accent-pink-500" value="Social (Cheers)" checked> 🥂 Social (Cheers)</label>
+                    </div>
+                </div>
             </div>
+
             <div class="grid grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-bold text-slate-500 mb-2">Players (2-7)</label>
@@ -136,7 +157,7 @@
         </div>
 
         <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-            <h3 class="font-black text-lg mb-4 flex items-center gap-2"><span class="text-xl">👥</span> Players</h3>
+            <h3 class="font-black text-lg mb-4 flex items-center gap-2"><span class="text-xl">👥</span> Players & Avatars</h3>
             <div id="player-inputs" class="space-y-4"></div>
         </div>
 
@@ -151,15 +172,20 @@
             <div class="w-6"></div>
         </div>
         <p class="text-slate-500 font-bold text-sm bg-slate-100 inline-block px-4 py-2 rounded-full">Each player gets a ball. Keep it secret!</p>
-        <p id="draft-status" class="text-xl font-black text-blue-600 mt-4"></p>
+        <p id="draft-status" class="text-xl font-black text-blue-600 mt-2"></p>
         
-        <div id="wheel-container" class="mt-8 mb-6">
+        <div id="wheel-container" class="mt-4 mb-4">
             <div class="pointer"></div>
             <div id="wheel"></div>
             <div class="wheel-peg"></div>
         </div>
+
+        <div class="flex items-center justify-center gap-2 mb-2">
+            <input type="checkbox" id="quick-spin-toggle" class="w-4 h-4 accent-blue-600 cursor-pointer">
+            <label for="quick-spin-toggle" class="text-xs font-bold text-slate-500 cursor-pointer">Quick Spin (Skip Animation)</label>
+        </div>
         
-        <div class="mb-6 space-y-2">
+        <div class="mb-4 space-y-2">
             <h4 class="text-sm font-bold text-slate-400 uppercase tracking-wider">Your Drafted Balls</h4>
             <div id="drafted-balls-tray"></div>
         </div>
@@ -167,17 +193,21 @@
         <button id="spin-btn" onclick="spinWheel()" class="w-full bg-blue-600 text-white py-4 rounded-full font-black text-xl shadow-lg transition flex justify-center items-center gap-2">
             <span>⟳</span> Spin Wheel
         </button>
-
-        <div class="text-xs font-bold text-slate-400 flex justify-center gap-4 pt-4 border-t border-slate-200">
-            <span>15 balls</span> • <span>1-7 solids</span> • <span>8 black</span> • <span>9-15 stripes</span>
-        </div>
     </div>
 
     <!-- 4. GAME SCREEN -->
     <div id="game-screen" class="screen max-w-4xl mx-auto px-4 py-6 space-y-6">
         <div class="flex justify-between items-center bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
-            <h2 class="text-xl font-black flex items-center gap-2"><span>☰</span> Pool Numbers</h2>
+            <h2 class="text-xl font-black flex items-center gap-2"><span>☰</span> Pool Numbers <span class="text-xs bg-slate-100 px-2 py-0.5 rounded font-mono">v1.6</span></h2>
             <div id="mode-badge" class="bg-drinking px-4 py-1.5 rounded-full text-white text-xs font-bold shadow-sm">Drinking Game</div>
+        </div>
+        
+        <!-- Persistent Active Rules Ticker (If Dangerous enabled) -->
+        <div id="active-rules-banner" class="bg-pink-50 border border-pink-200 p-3 rounded-xl flex items-center gap-3 hidden">
+            <span class="text-xl animate-bounce">⚡</span>
+            <div class="overflow-hidden whitespace-nowrap flex-1">
+                <p id="ticker-text" class="text-xs font-black text-pink-700 tracking-wide">ACTIVE HOUSE RULES: None yet...</p>
+            </div>
         </div>
         
         <div id="billiards-table" class="p-6 md:p-8 flex flex-wrap justify-center items-center gap-3 md:gap-5">
@@ -203,7 +233,7 @@
     <div id="handoff-modal" class="modal">
         <div class="bg-white p-8 rounded-3xl text-center space-y-6 w-full max-w-xs shadow-2xl relative overflow-hidden border border-slate-100">
             <div class="absolute top-0 left-0 w-full h-2 bg-blue-500"></div>
-            <div class="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mx-auto text-4xl">📱</div>
+            <div id="handoff-avatar" class="text-5xl mx-auto">📱</div>
             <h2 class="text-2xl font-black text-slate-800">Pass the Phone</h2>
             <p id="handoff-text" class="text-lg font-semibold text-slate-500">Hand it to Player 1</p>
             <button onclick="closeHandoff()" class="w-full bg-slate-900 text-white py-4 rounded-xl font-black text-lg transition">I am ready</button>
@@ -256,14 +286,22 @@
         </div>
     </div>
 
-    <!-- Sunk Alert (Frosted Glass) -->
+    <!-- Sunk Alert & Global Event Modal -->
     <div id="sunk-modal" class="modal">
         <div class="bg-dark-glass p-8 rounded-3xl text-center space-y-4 w-full max-w-sm border border-slate-700/50 shadow-2xl relative confetti-bg">
             <button onclick="closeSunk()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-2xl font-bold">×</button>
-            <div id="sunk-ball-display" class="flex justify-center transform scale-[1.8] my-8 drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]"></div>
+            <div id="sunk-ball-display" class="flex justify-center transform scale-[1.8] my-6 drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]"></div>
             <h2 id="sunk-title" class="text-2xl font-black text-white"></h2>
+            
+            <!-- Global Event Box -->
+            <div id="global-event-box" class="bg-pink-600/30 border border-pink-500 p-4 rounded-2xl space-y-2 hidden">
+                <p class="text-xs font-black uppercase tracking-widest text-pink-300">⚡ Global Event Triggered!</p>
+                <p id="global-event-rule-name" class="text-xl font-black text-white"></p>
+                <div id="lava-timer-display" class="text-4xl font-mono font-black text-amber-400 hidden">5</div>
+            </div>
+
             <div id="sunk-drink-order" class="text-4xl font-black text-amber-500 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] italic hidden"></div>
-            <p id="sunk-desc" class="text-sm font-bold text-slate-300 pb-4"></p>
+            <p id="sunk-desc" class="text-sm font-bold text-slate-300 pb-2"></p>
             <button onclick="closeSunk()" class="w-full bg-blue-600 text-white py-4 rounded-xl font-black text-lg transition shadow-lg">Got it</button>
         </div>
     </div>
@@ -284,7 +322,7 @@
 
     <script>
         const ballColors = ["#facc15", "#2563eb", "#dc2626", "#4c1d95", "#ea580c", "#16a34a", "#7f1d1d", "#1e293b", "#facc15", "#2563eb", "#dc2626", "#4c1d95", "#ea580c", "#16a34a", "#7f1d1d"];
-        const playerBadgeColors = ["bg-blue-600", "bg-emerald-500", "bg-amber-500", "bg-purple-600", "bg-pink-500", "bg-cyan-500", "bg-rose-500"];
+        const avatarList = ["🤠", "🤡", "👽", "🍻", "🚀", "🔥", "💀", "🦊", "🤖", "🦄"];
         
         let players = [];
         let availableBalls = [];
@@ -300,6 +338,75 @@
         let playerToUnlock = null;
         let historyLog = [];
         let peekInterval = null;
+        let lavaTimerInterval = null;
+        
+        // Dangerous Rule States
+        let dangerousEnabled = true;
+        let activeRulesPool = [];
+        let currentActiveRules = [];
+
+        // Web Audio API Synthesizer (Game Feel Sound Effects)
+        let audioCtx = null;
+        function getAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        }
+
+        function playSound(type) {
+            try {
+                const ctx = getAudioContext();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                const now = ctx.currentTime;
+
+                if (type === 'clack') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(300, now);
+                    osc.frequency.exponentialRampToValueAtTime(80, now + 0.08);
+                    gain.gain.setValueAtTime(0.5, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+                    osc.start(now);
+                    osc.stop(now + 0.08);
+                } else if (type === 'tick') {
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(800, now);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.03);
+                    osc.start(now);
+                    osc.stop(now + 0.03);
+                } else if (type === 'chime') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, now); // C5
+                    osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
+                    osc.frequency.setValueAtTime(783.99, now + 0.2); // G5
+                    gain.gain.setValueAtTime(0.3, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                    osc.start(now);
+                    osc.stop(now + 0.4);
+                } else if (type === 'buzzer') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(110, now);
+                    osc.frequency.setValueAtTime(116.54, now + 0.15);
+                    gain.gain.setValueAtTime(0.4, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
+                    osc.start(now);
+                    osc.stop(now + 0.6);
+                }
+            } catch(e) { console.log('Audio disabled or blocked'); }
+        }
+
+        function toggleDangerousSettings(val) {
+            dangerousEnabled = val;
+            document.getElementById('dangerous-rules-container').style.opacity = val ? '1' : '0.4';
+            document.getElementById('dangerous-rules-container').style.pointerEvents = val ? 'auto' : 'none';
+        }
 
         function selectGameMode(mode) {
             isDrinkingGame = (mode === 'drinking');
@@ -322,10 +429,7 @@
 
         function renderPlayerInputs() {
             let count = parseInt(document.getElementById('player-count').value);
-            if(count < 2) {
-                count = 2;
-                document.getElementById('player-count').value = 2;
-            }
+            if(count < 2) { count = 2; document.getElementById('player-count').value = 2; }
             ballsPerPlayer = parseInt(document.getElementById('balls-each').value);
             const container = document.getElementById('player-inputs');
             const warning = document.getElementById('rack-warning');
@@ -340,12 +444,14 @@
             container.innerHTML = '';
             for(let i=0; i<count; i++) {
                 const name = players[i] ? players[i].name : `Player ${i+1}`;
-                const pin = players[i] ? players[i].pin : (Math.floor(1000 + Math.random() * 9000)).toString();
-                const badgeColor = playerBadgeColors[i % playerBadgeColors.length];
+                const pin = players[i] ? players[i].pin : "";
+                const avatar = players[i] ? players[i].avatar : avatarList[i % avatarList.length];
                 
                 container.innerHTML += `
                     <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-full ${badgeColor} text-white flex items-center justify-center font-black text-sm flex-shrink-0">${i+1}</div>
+                        <select id="p-avatar-${i}" class="form-input w-16 text-center text-xl bg-slate-50 cursor-pointer p-2">
+                            ${avatarList.map(a => `<option value="${a}" ${a === avatar ? 'selected' : ''}>${a}</option>`).join('')}
+                        </select>
                         <input type="text" id="p-name-${i}" value="${name}" placeholder="Name" class="form-input flex-1">
                         <input type="password" inputmode="numeric" pattern="[0-9]*" id="p-pin-${i}" value="${pin}" placeholder="PIN" maxlength="4" class="form-input w-24 text-center tracking-widest font-mono font-bold" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                     </div>`;
@@ -409,16 +515,26 @@
             maxSips = parseInt(document.getElementById('max-sips').value);
             loserPenalty = document.getElementById('loser-penalty').value;
             
+            // Gather Dangerous Rules
+            dangerousEnabled = document.getElementById('dangerous-toggle').checked;
+            activeRulesPool = [];
+            if (dangerousEnabled && isDrinkingGame) {
+                const checks = document.querySelectorAll('.rule-chk:checked');
+                checks.forEach(c => activeRulesPool.push(c.value));
+            }
+            currentActiveRules = [];
+
             players = [];
             for(let i=0; i<count; i++) {
                 const name = document.getElementById(`p-name-${i}`).value || `Player ${i+1}`;
                 const pin = document.getElementById(`p-pin-${i}`).value;
+                const avatar = document.getElementById(`p-avatar-${i}`).value;
                 if(pin.length !== 4) { 
-                    warning.innerText = `Error: Please enter a full 4-digit PIN for ${name}`;
+                    warning.innerText = `Error: Please enter a full 4-digit PIN for ${name}.`;
                     warning.classList.remove('hidden');
                     return; 
                 }
-                players.push({ name, pin, balls: [], eliminated: false, id: i });
+                players.push({ name, pin, avatar, balls: [], eliminated: false, id: i });
             }
             
             warning.classList.add('hidden');
@@ -435,6 +551,7 @@
             players.forEach(p => { p.balls = []; p.eliminated = false; });
             currentPlayerDraftIndex = 0;
             ballsDraftedThisTurn = 0;
+            currentActiveRules = [];
         }
 
         function beginDraftTurn() {
@@ -444,7 +561,9 @@
             document.getElementById('drafted-balls-tray').innerHTML = '';
             updateDraftStatus();
             
-            document.getElementById('handoff-text').innerText = `Hand it to ${players[currentPlayerDraftIndex].name}`;
+            const curP = players[currentPlayerDraftIndex];
+            document.getElementById('handoff-avatar').innerText = curP.avatar;
+            document.getElementById('handoff-text').innerText = `Hand it to ${curP.name}`;
             document.getElementById('handoff-modal').classList.add('active');
         }
 
@@ -465,35 +584,51 @@
             availableBalls.splice(randomIndex, 1);
             
             const sips = isDrinkingGame ? Math.floor(Math.random() * (maxSips - minSips + 1)) + minSips : 0;
-            const sliceAngle = 360 / 15;
-            const targetRotation = (360 * 5) - ((chosenBall - 1) * sliceAngle); 
+            const quickSpin = document.getElementById('quick-spin-toggle').checked;
             
-            const wheel = document.getElementById('wheel');
-            wheel.style.transform = `rotate(${targetRotation}deg)`;
-            
-            setTimeout(() => {
-                players[currentPlayerDraftIndex].balls.push({ num: chosenBall, sips: sips, sunk: false });
-                ballsDraftedThisTurn++;
+            if (quickSpin) {
+                processDraftResult(chosenBall, sips);
+            } else {
+                const sliceAngle = 360 / 15;
+                const targetRotation = (360 * 5) - ((chosenBall - 1) * sliceAngle); 
+                const wheel = document.getElementById('wheel');
+                wheel.style.transform = `rotate(${targetRotation}deg)`;
                 
-                // Add ball to tray
-                const tray = document.getElementById('drafted-balls-tray');
-                const ballEl = document.createElement('div');
-                ballEl.className = 'transform scale-[0.8] origin-center animate-[flipIn_0.4s_ease-out]';
-                ballEl.innerHTML = createBallHTML(chosenBall);
-                tray.appendChild(ballEl);
+                // Tick sound simulation interval
+                let tickCount = 0;
+                const tickInterval = setInterval(() => {
+                    playSound('tick');
+                    tickCount++;
+                    if(tickCount > 15) clearInterval(tickInterval);
+                }, 200);
 
-                wheel.style.transition = 'none';
-                wheel.style.transform = `rotate(${targetRotation % 360}deg)`;
-                setTimeout(() => wheel.style.transition = 'transform 4s cubic-bezier(0.1, 0.7, 0.1, 1)', 50);
+                setTimeout(() => {
+                    clearInterval(tickInterval);
+                    processDraftResult(chosenBall, sips);
+                    wheel.style.transition = 'none';
+                    wheel.style.transform = `rotate(${targetRotation % 360}deg)`;
+                    setTimeout(() => wheel.style.transition = 'transform 4s cubic-bezier(0.1, 0.7, 0.1, 1)', 50);
+                }, 4100);
+            }
+        }
 
-                if(ballsDraftedThisTurn < ballsPerPlayer) {
-                    document.getElementById('spin-btn').disabled = false;
-                    updateDraftStatus();
-                } else {
-                    document.getElementById('draft-status').innerText = "Turn Complete!";
-                    setTimeout(nextDraftPlayer, 1500);
-                }
-            }, 4100);
+        function processDraftResult(chosenBall, sips) {
+            players[currentPlayerDraftIndex].balls.push({ num: chosenBall, sips: sips, sunk: false });
+            ballsDraftedThisTurn++;
+            
+            const tray = document.getElementById('drafted-balls-tray');
+            const ballEl = document.createElement('div');
+            ballEl.className = 'transform scale-[0.8] origin-center animate-[flipIn_0.4s_ease-out]';
+            ballEl.innerHTML = createBallHTML(chosenBall);
+            tray.appendChild(ballEl);
+
+            if(ballsDraftedThisTurn < ballsPerPlayer) {
+                document.getElementById('spin-btn').disabled = false;
+                updateDraftStatus();
+            } else {
+                document.getElementById('draft-status').innerText = "Turn Complete!";
+                setTimeout(nextDraftPlayer, 1200);
+            }
         }
 
         function nextDraftPlayer() {
@@ -508,8 +643,19 @@
 
         function initGameScreen() {
             document.getElementById('game-screen').classList.add('active');
+            updateBanner();
             renderTable();
             renderPlayerTrays();
+        }
+
+        function updateBanner() {
+            const banner = document.getElementById('active-rules-banner');
+            if (!dangerousEnabled || currentActiveRules.length === 0) {
+                banner.classList.add('hidden');
+                return;
+            }
+            banner.classList.remove('hidden');
+            document.getElementById('ticker-text').innerText = `ACTIVE HOUSE RULES: ${currentActiveRules.join(' • ')}`;
         }
 
         function renderTable() {
@@ -523,6 +669,15 @@
                 wrapper.onclick = () => handleBallClick(tb);
                 table.appendChild(wrapper);
             });
+
+            // Sudden Death Glow check (3 or fewer active player balls left)
+            let totalLivePlayerBalls = 0;
+            players.forEach(p => { totalLivePlayerBalls += p.balls.filter(b => !b.sunk).length; });
+            if (totalLivePlayerBalls <= 3 && totalLivePlayerBalls > 0) {
+                table.classList.add('sudden-death-glow');
+            } else {
+                table.classList.remove('sudden-death-glow');
+            }
         }
 
         function renderPlayerTrays() {
@@ -530,7 +685,6 @@
             trays.innerHTML = '';
             
             players.forEach((p, idx) => {
-                const badgeColor = playerBadgeColors[p.id % playerBadgeColors.length];
                 const liveCount = p.balls.filter(b => !b.sunk).length;
                 const totalSips = p.balls.filter(b => b.sunk).reduce((sum, b) => sum + b.sips, 0);
                 const isEliminated = p.eliminated || (ballsDraftedThisTurn > 0 && liveCount === 0);
@@ -552,7 +706,7 @@
                     <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between ${isEliminated ? 'opacity-50 grayscale' : ''}">
                         <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-2">
                             <div class="flex items-center gap-2">
-                                <div class="w-6 h-6 rounded-full ${badgeColor} text-white flex items-center justify-center font-black text-xs">${p.id+1}</div>
+                                <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-lg">${p.avatar}</div>
                                 <h3 class="font-black text-slate-800 text-lg">${p.name}</h3>
                             </div>
                             <div class="flex items-center gap-1">
@@ -595,6 +749,7 @@
             if(tableBall.sunk) return;
             tableBall.sunk = true;
             historyLog.push(tableBall.num);
+            playSound('clack');
             
             let owner = null;
             let playerBallInfo = null;
@@ -611,7 +766,26 @@
                 const liveCount = owner.balls.filter(b => !b.sunk).length;
                 owner.eliminated = liveCount === 0;
                 renderPlayerTrays();
-                showSunkModal(owner, playerBallInfo, liveCount, owner.eliminated);
+                
+                // Roll Global Event if Dangerous enabled and rules pool has items
+                let triggeredRule = null;
+                if (dangerousEnabled && isDrinkingGame && activeRulesPool.length > 0) {
+                    if (tableBall.num === 8 && activeRulesPool.includes('8-Ball Special')) {
+                        triggeredRule = '8-Ball Special';
+                    } else {
+                        // Random chance or pick from pool
+                        const availableNon8 = activeRulesPool.filter(r => r !== '8-Ball Special');
+                        if (availableNon8.length > 0 && Math.random() < 0.6) {
+                            triggeredRule = availableNon8[Math.floor(Math.random() * availableNon8.length)];
+                        }
+                    }
+                    if (triggeredRule && !currentActiveRules.includes(triggeredRule)) {
+                        currentActiveRules.push(triggeredRule);
+                        updateBanner();
+                    }
+                }
+                
+                showSunkModal(owner, playerBallInfo, liveCount, owner.eliminated, triggeredRule);
             }
         }
 
@@ -630,19 +804,43 @@
             renderPlayerTrays();
         }
 
-        function showSunkModal(owner, ballInfo, liveCount, isEliminated) {
+        function showSunkModal(owner, ballInfo, liveCount, isEliminated, globalRule) {
+            playSound('chime');
             const mode = document.getElementById('game-mode').value;
             const title = document.getElementById('sunk-title');
             const desc = document.getElementById('sunk-desc');
             const drink = document.getElementById('sunk-drink-order');
-            document.getElementById('sunk-ball-display').innerHTML = createBallHTML(ballInfo.num);
+            const eventBox = document.getElementById('global-event-box');
+            const lavaTimer = document.getElementById('lava-timer-display');
             
+            document.getElementById('sunk-ball-display').innerHTML = createBallHTML(ballInfo.num);
             drink.classList.add('hidden');
+            eventBox.classList.add('hidden');
+            lavaTimer.classList.add('hidden');
+            clearInterval(lavaTimerInterval);
+
+            if (globalRule) {
+                eventBox.classList.remove('hidden');
+                document.getElementById('global-event-rule-name').innerText = globalRule;
+                if (globalRule === 'The Floor is Lava') {
+                    lavaTimer.classList.remove('hidden');
+                    let timeLeft = 5;
+                    lavaTimer.innerText = timeLeft;
+                    lavaTimerInterval = setInterval(() => {
+                        timeLeft--;
+                        lavaTimer.innerText = timeLeft;
+                        playSound('tick');
+                        if(timeLeft <= 0) {
+                            clearInterval(lavaTimerInterval);
+                            playSound('buzzer');
+                        }
+                    }, 1000);
+                }
+            }
             
             if(mode === 'reveal') {
                 title.innerText = `${owner.name}'s Ball!`;
                 desc.innerText = isEliminated ? `0 balls remaining. Eliminated!` : `${liveCount} balls left in play.`;
-                
                 if(isDrinkingGame) {
                     drink.classList.remove('hidden');
                     drink.innerHTML = `${owner.name} takes<br><span class="text-6xl my-2 block">${ballInfo.sips}</span>SIPS!`;
@@ -658,7 +856,11 @@
             document.getElementById('sunk-modal').classList.add('active');
         }
 
-        function closeSunk() { document.getElementById('sunk-modal').classList.remove('active'); checkEndGame(); }
+        function closeSunk() { 
+            clearInterval(lavaTimerInterval);
+            document.getElementById('sunk-modal').classList.remove('active'); 
+            checkEndGame(); 
+        }
 
         function checkWinCondition() {
             let totalLivePlayerBalls = 0;
@@ -678,6 +880,7 @@
         function checkEndGame() { checkWinCondition(); }
 
         function triggerGameOver(winner, mutualLoss) {
+            playSound('chime');
             document.getElementById('end-modal').classList.add('active');
             const title = document.getElementById('end-title');
             const desc = document.getElementById('end-desc');
@@ -706,12 +909,8 @@
         function pressPin(val) {
             if(val === 'C') { currentPinInput = currentPinInput.slice(0, -1); }
             else if(currentPinInput.length < 4) { currentPinInput += val; }
-            
             updatePinDots();
-            
-            if(currentPinInput.length === 4) {
-                setTimeout(checkPin, 150);
-            }
+            if(currentPinInput.length === 4) { setTimeout(checkPin, 150); }
         }
 
         function updatePinDots() {
@@ -789,4 +988,3 @@
     </script>
 </body>
 </html>
-
