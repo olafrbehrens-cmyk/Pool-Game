@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Olaf's Pool Game v1.6</title>
+    <title>Olaf's Pool Game v1.6.1</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
     <style>
@@ -21,8 +21,8 @@
         .bg-dark-glass { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(15px); }
 
         /* Wheel Styling */
-        #wheel-container, #fate-wheel-container { position: relative; width: 300px; height: 300px; margin: 0 auto; border-radius: 50%; border: 12px solid #cbd5e1; box-shadow: 0 10px 25px rgba(0,0,0,0.1), inset 0 0 15px rgba(0,0,0,0.3); background: white; }
-        #wheel, #fate-wheel { width: 100%; height: 100%; border-radius: 50%; transition: transform 4s cubic-bezier(0.1, 0.7, 0.1, 1); position: relative; overflow: hidden; }
+        #wheel-container, #risk-wheel-container { position: relative; width: 300px; height: 300px; margin: 0 auto; border-radius: 50%; border: 12px solid #cbd5e1; box-shadow: 0 10px 25px rgba(0,0,0,0.1), inset 0 0 15px rgba(0,0,0,0.3); background: white; }
+        #wheel, #risk-wheel { width: 100%; height: 100%; border-radius: 50%; transition: transform 4s cubic-bezier(0.1, 0.7, 0.1, 1); position: relative; overflow: hidden; }
         .slice { position: absolute; width: 62px; height: 50%; left: calc(50% - 31px); top: 0; transform-origin: bottom center; display: flex; justify-content: center; padding-top: 10px; font-weight: 900; font-size: 1.25rem; text-shadow: 0px 1px 3px rgba(255,255,255,0.8); clip-path: polygon(0 0, 100% 0, 50% 100%); }
         .slice-stripe-bg { position: absolute; top: 25%; bottom: 25%; left: 0; right: 0; z-index: 1; }
         .slice-number { position: relative; z-index: 2; color: #0f172a; text-shadow: 0px 1px 2px rgba(255,255,255,0.9); }
@@ -65,7 +65,7 @@
     <div id="landing-screen" class="screen active max-w-md mx-auto px-6 py-12 text-center space-y-10">
         <div class="space-y-4 pt-8">
             <div class="text-6xl mx-auto drop-shadow-md">🎱</div>
-            <h1 class="text-4xl font-black tracking-tight text-slate-800">Olaf's Pool Game <span class="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-md font-mono">v1.6</span></h1>
+            <h1 class="text-4xl font-black tracking-tight text-slate-800">Olaf's Pool Game <span class="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-md font-mono">v1.6.1</span></h1>
             <p class="text-slate-500 font-semibold text-lg">Secret balls. Real shots. Big consequences.</p>
         </div>
         <div class="space-y-6">
@@ -130,7 +130,7 @@
                     </select>
                 </div>
 
-                <!-- Let's Get Dangerous & Custom Rule Creator -->
+                <!-- Let's Get Dangerous & Streamlined Rule Pool -->
                 <div class="pt-2 border-t border-slate-100">
                     <div class="flex items-center justify-between mb-3">
                         <span class="font-black text-sm text-slate-700 flex items-center gap-1.5">⚡ Let's Get Dangerous</span>
@@ -140,13 +140,9 @@
                         <label class="flex items-center gap-3 cursor-pointer py-1 border-b border-slate-200/60"><input type="checkbox" class="rule-chk accent-pink-500 w-4 h-4" value="8-Ball Special" checked> 🎱 8-Ball Special</label>
                         <label class="flex items-center gap-3 cursor-pointer py-1 border-b border-slate-200/60"><input type="checkbox" class="rule-chk accent-pink-500 w-4 h-4" value="Left-Handed Only" checked> 👈 Left-Handed Only</label>
                         <label class="flex items-center gap-3 cursor-pointer py-1 border-b border-slate-200/60"><input type="checkbox" class="rule-chk accent-pink-500 w-4 h-4" value="Waterfall" checked> 🌊 Waterfall</label>
-                        <label class="flex items-center gap-3 cursor-pointer py-1 border-b border-slate-200/60"><input type="checkbox" class="rule-chk accent-pink-500 w-4 h-4" value="The Buffalo Rule" checked> 🐃 The Buffalo Rule</label>
+                        <label class="flex items-center gap-3 cursor-pointer py-1 border-b border-slate-200/60"><input type="checkbox" class="rule-chk accent-pink-500 w-4 h-4" value="The Buffalo Rule" checked> 🐃 The Buffalo Rule (Call out wrong-hand drinking)</label>
                         <label class="flex items-center gap-3 cursor-pointer py-1 border-b border-slate-200/60"><input type="checkbox" class="rule-chk accent-pink-500 w-4 h-4" value="Give a Sip" checked> 🎁 Give a Sip</label>
-                        <label class="flex items-center gap-3 cursor-pointer py-1 border-b border-slate-200/60"><input type="checkbox" class="rule-chk accent-pink-500 w-4 h-4" value="Thumb Master" checked> 👍 Thumb Master</label>
-                        <label class="flex items-center gap-3 cursor-pointer py-1 border-b border-slate-200/60"><input type="checkbox" class="rule-chk accent-pink-500 w-4 h-4" value="Rhyme Time" checked> 🎵 Rhyme Time</label>
-                        <label class="flex items-center gap-3 cursor-pointer py-1 border-b border-slate-200/60"><input type="checkbox" class="rule-chk accent-pink-500 w-4 h-4" value="The Floor is Lava" checked> 🌋 The Floor is Lava</label>
-                        <label class="flex items-center gap-3 cursor-pointer py-1 border-b border-slate-200/60"><input type="checkbox" class="rule-chk accent-pink-500 w-4 h-4" value="Category Game" checked> 🧠 Category Game</label>
-                        <label class="flex items-center gap-3 cursor-pointer py-1"><input type="checkbox" class="rule-chk accent-pink-500 w-4 h-4" value="Social (Cheers)" checked> 🥂 Social (Cheers)</label>
+                        <label class="flex items-center gap-3 cursor-pointer py-1"><input type="checkbox" class="rule-chk accent-pink-500 w-4 h-4" value="The Floor is Lava" checked> 🌋 The Floor is Lava</label>
                     </div>
 
                     <!-- Custom Rule Creator Input -->
@@ -212,7 +208,7 @@
     <!-- 4. GAME SCREEN -->
     <div id="game-screen" class="screen max-w-4xl mx-auto px-4 py-6 space-y-6">
         <div class="flex justify-between items-center bg-white p-4 rounded-2xl shadow-sm border border-slate-100 relative">
-            <h2 class="text-xl font-black flex items-center gap-2"><span>🎱</span> Olaf's Pool Game <span class="text-xs bg-slate-100 px-2 py-0.5 rounded font-mono">v1.6</span></h2>
+            <h2 class="text-xl font-black flex items-center gap-2"><span>🎱</span> Olaf's Pool Game <span class="text-xs bg-slate-100 px-2 py-0.5 rounded font-mono">v1.6.1</span></h2>
             
             <div class="flex items-center gap-3">
                 <div id="mode-badge" class="bg-drinking px-4 py-1.5 rounded-full text-white text-xs font-bold shadow-sm">Drinking Game</div>
@@ -220,7 +216,8 @@
                 <!-- Top Right Game Menu Dropdown -->
                 <div class="relative">
                     <button onclick="toggleGameMenu()" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center font-bold text-slate-700 transition">☰</button>
-                    <div id="game-menu-dropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-2xl shadow-xl border border-slate-100 py-2 hidden z-40">
+                    <div id="game-menu-dropdown" class="absolute right-0 mt-2 w-52 bg-white rounded-2xl shadow-xl border border-slate-100 py-2 hidden z-40">
+                        <button onclick="openHistoryModal()" class="w-full text-left px-4 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-50 flex items-center gap-2"><span>📜</span> Shot History</button>
                         <button onclick="openAdminModal()" class="w-full text-left px-4 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-50 flex items-center gap-2"><span>🛡</span> Admin Controls</button>
                         <button onclick="location.reload()" class="w-full text-left px-4 py-2.5 text-sm font-bold text-red-600 hover:bg-red-50 flex items-center gap-2"><span>🚪</span> Exit to Menu</button>
                     </div>
@@ -312,6 +309,20 @@
         </div>
     </div>
 
+    <!-- Shot History Modal (Grudge Board) -->
+    <div id="history-modal" class="modal">
+        <div class="bg-white p-6 rounded-3xl space-y-4 w-full max-w-sm shadow-2xl border border-slate-200">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <h2 class="text-xl font-black text-slate-800 flex items-center gap-2"><span>📜</span> Shot History</h2>
+                <button onclick="closeHistoryModal()" class="text-slate-400 hover:text-slate-800 text-2xl font-bold">×</button>
+            </div>
+            <div id="shot-history-list" class="space-y-2 max-h-[50vh] overflow-y-auto text-left text-sm font-semibold text-slate-600">
+                <p class="text-slate-400 text-center py-4">No balls sunk yet.</p>
+            </div>
+            <button onclick="closeHistoryModal()" class="w-full bg-slate-900 text-white py-3 rounded-xl font-black text-sm shadow-md">Close</button>
+        </div>
+    </div>
+
     <!-- Admin Control Panel Modal -->
     <div id="admin-modal" class="modal">
         <div class="bg-white p-6 rounded-3xl space-y-4 w-full max-w-lg shadow-2xl border border-slate-200 max-h-[90vh] overflow-y-auto">
@@ -327,25 +338,60 @@
         </div>
     </div>
 
-    <!-- Sunk Alert (Step 1: Penalty & Double Jeopardy Callout) -->
+    <!-- Sudden Death Alert Modal (Feature #3) -->
+    <div id="sudden-death-modal" class="modal">
+        <div class="bg-gradient-to-br from-red-900 via-rose-950 to-slate-900 p-8 rounded-3xl text-center space-y-6 w-full max-w-sm border-2 border-red-500 shadow-[0_0_35px_rgba(239,68,68,0.6)] relative">
+            <div class="w-16 h-16 bg-red-500/20 border border-red-400 rounded-full flex items-center justify-center mx-auto text-3xl animate-pulse">🔥</div>
+            <div class="space-y-2">
+                <p class="text-xs font-black uppercase tracking-widest text-red-300">Table Alert</p>
+                <h2 class="text-3xl font-black text-white">SUDDEN DEATH</h2>
+            </div>
+            <p class="text-sm font-semibold text-rose-100 bg-white/10 p-4 rounded-2xl backdrop-blur-md">Only 3 or fewer player balls remain active on the table! Grudge matches incoming.</p>
+            <button onclick="closeSuddenDeathModal()" class="w-full bg-red-600 hover:bg-red-500 text-white py-4 rounded-xl font-black text-lg transition shadow-lg">Let's Finish It!</button>
+        </div>
+    </div>
+
+    <!-- Sunk Alert (Step 1: Penalty & 3+ Sip Risk Wheel Prompt) -->
     <div id="sunk-modal" class="modal">
         <div class="bg-dark-glass p-8 rounded-3xl text-center space-y-4 w-full max-w-sm border border-slate-700/50 shadow-2xl relative confetti-bg">
             <button onclick="proceedToEventOrClose()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-2xl font-bold">×</button>
             <div id="sunk-ball-display" class="flex justify-center transform scale-[1.8] my-6 drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]"></div>
             <h2 id="sunk-title" class="text-2xl font-black text-white"></h2>
             
-            <!-- Double Jeopardy Bounty Toggle Option -->
-            <div id="double-jeopardy-box" class="bg-blue-600/30 border border-blue-400 p-3 rounded-xl space-y-2">
-                <p class="text-xs font-bold text-blue-200">🎯 Double Jeopardy Callout</p>
-                <select id="bounty-caller" class="form-input text-xs bg-slate-900 text-white py-2">
-                    <option value="">No bounty called</option>
-                </select>
-                <button onclick="applyDoubleJeopardy()" class="w-full bg-blue-600 hover:bg-blue-500 text-white py-2 rounded-lg font-black text-xs transition">Apply Double Penalty</button>
+            <!-- High-Sip Risk Wheel Prompt Box (Triggered if sips >= 3) -->
+            <div id="risk-wheel-prompt-box" class="bg-pink-600/30 border border-pink-500 p-4 rounded-2xl space-y-3 hidden">
+                <p class="text-xs font-black text-pink-300 uppercase tracking-wide">🔥 High Penalty (3+ Sips)!</p>
+                <p class="text-xs text-white font-semibold">Do you want to risk it on the 70/30 Risk Wheel?</p>
+                <button onclick="openRiskWheelModal()" class="w-full bg-pink-600 hover:bg-pink-500 text-white py-2.5 rounded-xl font-black text-sm shadow-md transition">🎡 Spin Risk Wheel (70/30)</button>
             </div>
 
             <div id="sunk-drink-order" class="text-4xl font-black text-amber-500 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] italic hidden"></div>
             <p id="sunk-desc" class="text-sm font-bold text-slate-300 pb-2"></p>
             <button onclick="proceedToEventOrClose()" class="w-full bg-blue-600 text-white py-4 rounded-xl font-black text-lg transition shadow-lg">Continue</button>
+        </div>
+    </div>
+
+    <!-- Risk Wheel Modal (70% Red / 30% Green Odds) -->
+    <div id="risk-wheel-modal" class="modal">
+        <div class="bg-slate-900 p-6 rounded-3xl text-center space-y-4 w-full max-w-sm border-2 border-pink-500 shadow-2xl relative">
+            <h2 class="text-2xl font-black text-pink-400">🔥 High-Sip Risk Wheel</h2>
+            <p class="text-xs font-bold text-slate-400">70% Red (Drink Double) vs 30% Green (Give Sips away)</p>
+            
+            <div id="risk-wheel-container" class="my-4">
+                <div class="pointer" style="border-top-color: #ec4899;"></div>
+                <div id="risk-wheel"></div>
+                <div class="wheel-peg"></div>
+            </div>
+
+            <div id="target-player-select-box" class="space-y-2 hidden">
+                <label class="block text-xs font-bold text-emerald-400">🎉 GREEN HIT! Choose who takes your sips:</label>
+                <select id="risk-target-player" class="form-input text-xs bg-slate-800 text-white py-2"></select>
+                <button onclick="assignRiskSipsToTarget()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 py-2.5 rounded-xl font-black text-xs">Confirm & Give Sips</button>
+            </div>
+
+            <p id="risk-result-text" class="text-sm font-black text-white min-h-[40px] flex items-center justify-center bg-slate-800 rounded-xl p-2 border border-slate-700">Spin the wheel to test your luck!</p>
+            <button id="spin-risk-btn" onclick="spinRiskWheel()" class="w-full bg-pink-600 hover:bg-pink-500 text-white py-3 rounded-xl font-black text-lg transition shadow-lg">Spin Wheel!</button>
+            <button onclick="closeRiskWheelModal()" class="w-full bg-slate-800 text-slate-300 py-2 rounded-xl font-bold text-sm">Close</button>
         </div>
     </div>
 
@@ -360,24 +406,6 @@
             </div>
             <p id="rule-popup-desc" class="text-sm font-semibold text-pink-100 bg-white/10 p-4 rounded-2xl backdrop-blur-md"></p>
             <button onclick="closeRulePopup()" class="w-full bg-pink-600 hover:bg-pink-500 text-white py-4 rounded-xl font-black text-lg transition shadow-lg">Let's Go!</button>
-        </div>
-    </div>
-
-    <!-- Fate Wheel Wildcard Penalty Modal -->
-    <div id="fate-modal" class="modal">
-        <div class="bg-slate-900 p-6 rounded-3xl text-center space-y-4 w-full max-w-sm border-2 border-amber-500 shadow-2xl relative">
-            <h2 class="text-2xl font-black text-amber-400">🎡 Fate Wheel Wildcard</h2>
-            <p class="text-xs font-bold text-slate-400">Spin for a random extra punishment!</p>
-            
-            <div id="fate-wheel-container" class="my-4">
-                <div class="pointer" style="border-top-color: #f59e0b;"></div>
-                <div id="fate-wheel"></div>
-                <div class="wheel-peg"></div>
-            </div>
-
-            <p id="fate-result-text" class="text-lg font-black text-white min-h-[40px] flex items-center justify-center bg-slate-800 rounded-xl p-2 border border-slate-700">Ready to spin...</p>
-            <button id="spin-fate-btn" onclick="spinFateWheel()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 py-3 rounded-xl font-black text-lg transition">Spin Fate</button>
-            <button onclick="closeFateModal()" class="w-full bg-slate-800 text-slate-300 py-2 rounded-xl font-bold text-sm">Skip / Close</button>
         </div>
     </div>
 
@@ -398,8 +426,19 @@
     <script>
         const ballColors = ["#facc15", "#2563eb", "#dc2626", "#4c1d95", "#ea580c", "#16a34a", "#7f1d1d", "#1e293b", "#facc15", "#2563eb", "#dc2626", "#4c1d95", "#ea580c", "#16a34a", "#7f1d1d"];
         const avatarList = ["🤠", "🤡", "👽", "🍻", "🚀", "🔥", "💀", "🦊", "🤖", "🦄"];
-        const fateSlices = ["Do 10 Pushups", "Give 2 Sips", "Chug Your Drink", "Immunity from next sip", "Take 2 Extra Sips", "Swap a ball with someone"];
-        const fateColors = ["#ef4444", "#3b82f6", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899"];
+        
+        const riskWheelSlices = [
+            { text: "RED: Drink Double", color: "#dc2626", type: "double" },
+            { text: "RED: Drink Double", color: "#b91c1c", type: "double" },
+            { text: "RED: Drink Double", color: "#ef4444", type: "double" },
+            { text: "RED: Drink Double", color: "#991b1b", type: "double" },
+            { text: "RED: Drink Double", color: "#dc2626", type: "double" },
+            { text: "RED: Drink Double", color: "#7f1d1d", type: "double" },
+            { text: "RED: Drink Double", color: "#ef4444", type: "double" },
+            { text: "GREEN: Give Sips", color: "#16a34a", type: "give" },
+            { text: "GREEN: Give Sips", color: "#15803d", type: "give" },
+            { text: "GREEN: Give Sips", color: "#22c55e", type: "give" }
+        ];
         
         let players = [];
         let availableBalls = [];
@@ -415,10 +454,12 @@
         let currentPinInput = "";
         let playerToUnlock = null;
         let historyLog = [];
+        let shotHistoryRecords = [];
         let peekInterval = null;
         let pendingGlobalEvent = null;
         let lastSunkOwner = null;
         let lastSunkBallInfo = null;
+        let suddenDeathAlertShown = false;
         
         let dangerousEnabled = true;
         let activeRulesPool = [];
@@ -428,13 +469,9 @@
             '8-Ball Special': 'The black 8-ball was sunk! All players take a collective group penalty sip!',
             'Left-Handed Only': 'The ball owner must drink and play using exclusively their non-dominant hand for the rest of the game!',
             'Waterfall': 'Everyone starts drinking simultaneously! The shooter cannot stop until the person to their right stops.',
-            'The Buffalo Rule': 'Anyone caught holding or drinking with their right hand for the rest of the game instantly takes an extra sip penalty!',
+            'The Buffalo Rule': 'First person to call out someone drinking with their wrong hand gets to assign a sip penalty to them!',
             'Give a Sip': 'Instead of taking sips yourself, you get to assign your sip count directly to any opponent at the table!',
-            'Thumb Master': 'The shooter can silently place their thumb on the table frame. Last player to copy takes a sip!',
-            'Rhyme Time': 'A word is spoken out loud. Cycle through rhymes clockwise without repeating or stalling!',
-            'The Floor is Lava': 'Lift your feet off the ground within 5 seconds before the buzzer sounds!',
-            'Category Game': 'Rapid-fire category naming! Repeating or freezing incurs an instant sip penalty.',
-            'Social (Cheers)': 'Instant group toast! Everyone raises their glass, says Cheers, and takes a sip.'
+            'The Floor is Lava': 'Lift your feet off the ground within 5 seconds before the buzzer sounds!'
         };
 
         function triggerHaptic(pattern = 50) {
@@ -595,16 +632,16 @@
             }
         }
 
-        function buildFateWheelHTML() {
-            const wheel = document.getElementById('fate-wheel');
+        function buildRiskWheelHTML() {
+            const wheel = document.getElementById('risk-wheel');
             wheel.innerHTML = '';
-            const sliceAngle = 360 / fateSlices.length;
-            for(let i = 0; i < fateSlices.length; i++) {
+            const sliceAngle = 360 / riskWheelSlices.length;
+            for(let i = 0; i < riskWheelSlices.length; i++) {
                 const slice = document.createElement('div');
                 slice.className = 'slice';
                 slice.style.transform = `rotate(${i * sliceAngle}deg)`;
-                slice.style.backgroundColor = fateColors[i % fateColors.length];
-                slice.innerHTML = `<span class="slice-number text-xs" style="color:white; font-size:10px;">${fateSlices[i]}</span>`;
+                slice.style.backgroundColor = riskWheelSlices[i].color;
+                slice.innerHTML = `<span class="slice-number text-xs" style="color:white; font-size:9px;">${riskWheelSlices[i].text.includes('RED') ? '🔴 DOUBLE' : '🟢 GIVE'}</span>`;
                 wheel.appendChild(slice);
             }
         }
@@ -668,7 +705,7 @@
             warning.classList.add('hidden');
             resetGameLogic();
             buildWheelHTML();
-            buildFateWheelHTML();
+            buildRiskWheelHTML();
             document.getElementById('setup-screen').classList.remove('active');
             beginDraftTurn();
         }
@@ -677,6 +714,8 @@
             availableBalls = Array.from({length: 15}, (_, i) => i + 1);
             tableBalls = Array.from({length: 15}, (_, i) => ({ num: i + 1, sunk: false }));
             historyLog = [];
+            shotHistoryRecords = [];
+            suddenDeathAlertShown = false;
             players.forEach(p => { p.balls = []; p.eliminated = false; });
             currentPlayerDraftIndex = 0;
             ballsDraftedThisTurn = 0;
@@ -802,11 +841,21 @@
 
             let totalLivePlayerBalls = 0;
             players.forEach(p => { totalLivePlayerBalls += p.balls.filter(b => !b.sunk).length; });
+            
             if (totalLivePlayerBalls <= 3 && totalLivePlayerBalls > 0) {
                 table.classList.add('sudden-death-glow');
+                if (!suddenDeathAlertShown) {
+                    suddenDeathAlertShown = true;
+                    document.getElementById('sudden-death-modal').classList.add('active');
+                    playSound('chime');
+                }
             } else {
                 table.classList.remove('sudden-death-glow');
             }
+        }
+
+        function closeSuddenDeathModal() {
+            document.getElementById('sudden-death-modal').classList.remove('active');
         }
 
         function renderPlayerTrays() {
@@ -881,6 +930,12 @@
                 if(b) { owner = p; playerBallInfo = b; b.sunk = true; }
             });
 
+            if (owner) {
+                shotHistoryRecords.push({ player: owner.name, avatar: owner.avatar, ballNum: tableBall.num });
+            } else {
+                shotHistoryRecords.push({ player: "Unclaimed", avatar: "🎱", ballNum: tableBall.num });
+            }
+
             renderTable();
             checkWinCondition();
 
@@ -912,9 +967,37 @@
             }
         }
 
+        function openHistoryModal() {
+            document.getElementById('game-menu-dropdown').classList.add('hidden');
+            const container = document.getElementById('shot-history-list');
+            container.innerHTML = '';
+
+            if (shotHistoryRecords.length === 0) {
+                container.innerHTML = '<p class="text-slate-400 text-center py-4">No balls sunk yet.</p>';
+            } else {
+                shotHistoryRecords.slice().reverse().forEach((record, index) => {
+                    container.innerHTML += `
+                        <div class="flex items-center justify-between bg-slate-50 p-3 rounded-xl border border-slate-100">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xl">${record.avatar}</span>
+                                <span class="font-bold text-slate-800">${record.player}</span>
+                            </div>
+                            <span class="font-black text-blue-600 bg-blue-50 px-2 py-1 rounded-lg text-xs">Ball #${record.ballNum}</span>
+                        </div>
+                    `;
+                });
+            }
+            document.getElementById('history-modal').classList.add('active');
+        }
+
+        function closeHistoryModal() {
+            document.getElementById('history-modal').classList.remove('active');
+        }
+
         function undoLastBall() {
             if(historyLog.length === 0) return;
             const lastNum = historyLog.pop();
+            shotHistoryRecords.pop();
             const tb = tableBalls.find(b => b.num === lastNum);
             tb.sunk = false;
             
@@ -933,15 +1016,15 @@
             const title = document.getElementById('sunk-title');
             const desc = document.getElementById('sunk-desc');
             const drink = document.getElementById('sunk-drink-order');
+            const riskPrompt = document.getElementById('risk-wheel-prompt-box');
             
             document.getElementById('sunk-ball-display').innerHTML = createBallHTML(ballInfo.num);
             drink.classList.add('hidden');
+            riskPrompt.classList.add('hidden');
 
-            const callerSelect = document.getElementById('bounty-caller');
-            callerSelect.innerHTML = '<option value="">No bounty called</option>';
-            players.forEach(p => {
-                callerSelect.innerHTML += `<option value="${p.id}">${p.name}</option>`;
-            });
+            if (isDrinkingGame && ballInfo.sips >= 3) {
+                riskPrompt.classList.remove('hidden');
+            }
 
             if(mode === 'reveal') {
                 title.innerText = `${owner.name}'s Ball!`;
@@ -961,42 +1044,22 @@
             document.getElementById('sunk-modal').classList.add('active');
         }
 
-        function applyDoubleJeopardy() {
-            const callerId = document.getElementById('bounty-caller').value;
-            if (callerId === "") return;
-            lastSunkBallInfo.sips *= 2;
-            renderPlayerTrays();
-            document.getElementById('sunk-drink-order').innerHTML = `${lastSunkOwner.name} takes<br><span class="text-6xl my-2 block text-red-500">${lastSunkBallInfo.sips}</span>DOUBLE SIPS!`;
-            document.getElementById('double-jeopardy-box').classList.add('hidden');
-        }
-
-        function proceedToEventOrClose() {
+        function openRiskWheelModal() {
             document.getElementById('sunk-modal').classList.remove('active');
-            document.getElementById('double-jeopardy-box').classList.remove('hidden');
-            
-            if (isDrinkingGame && Math.random() < 0.3) {
-                openFateModal();
-            } else if (pendingGlobalEvent) {
-                showRulePopup(pendingGlobalEvent);
-            } else {
-                checkEndGame();
-            }
+            document.getElementById('risk-result-text').innerText = "Spin for Red (Double) or Green (Give)s!";
+            document.getElementById('spin-risk-btn').disabled = false;
+            document.getElementById('target-player-select-box').classList.add('hidden');
+            document.getElementById('risk-wheel-modal').classList.add('active');
         }
 
-        function openFateModal() {
-            document.getElementById('fate-result-text').innerText = "Ready to spin...";
-            document.getElementById('spin-fate-btn').disabled = false;
-            document.getElementById('fate-modal').classList.add('active');
-        }
-
-        function spinFateWheel() {
-            document.getElementById('spin-fate-btn').disabled = true;
-            const fateWheel = document.getElementById('fate-wheel');
-            const randomIdx = Math.floor(Math.random() * fateSlices.length);
-            const sliceAngle = 360 / fateSlices.length;
+        function spinRiskWheel() {
+            document.getElementById('spin-risk-btn').disabled = true;
+            const riskWheel = document.getElementById('risk-wheel');
+            const randomIdx = Math.floor(Math.random() * riskWheelSlices.length);
+            const sliceAngle = 360 / riskWheelSlices.length;
             const targetRotation = (360 * 5) - (randomIdx * sliceAngle);
 
-            fateWheel.style.transform = `rotate(${targetRotation}deg)`;
+            riskWheel.style.transform = `rotate(${targetRotation}deg)`;
             let ticks = 0;
             const tInterval = setInterval(() => {
                 playSound('tick');
@@ -1007,15 +1070,52 @@
             setTimeout(() => {
                 clearInterval(tInterval);
                 playSound('chime');
-                document.getElementById('fate-result-text').innerText = `Fate: ${fateSlices[randomIdx]}!`;
-                fateWheel.style.transition = 'none';
-                fateWheel.style.transform = `rotate(${targetRotation % 360}deg)`;
-                setTimeout(() => fateWheel.style.transition = 'transform 4s cubic-bezier(0.1, 0.7, 0.1, 1)', 50);
+                const outcome = riskWheelSlices[randomIdx];
+                
+                if (outcome.type === 'double') {
+                    lastSunkBallInfo.sips *= 2;
+                    renderPlayerTrays();
+                    document.getElementById('risk-result-text').innerHTML = `🔴 RED HIT! <span class="text-red-400">Drink Double (${lastSunkBallInfo.sips} Sips)!</span>`;
+                } else {
+                    document.getElementById('risk-result-text').innerHTML = `🟢 GREEN HIT! <span class="text-emerald-400">Give sips to another player!</span>`;
+                    const targetSelect = document.getElementById('risk-target-player');
+                    targetSelect.innerHTML = '';
+                    players.forEach(p => {
+                        if (p.id !== lastSunkOwner.id) {
+                            targetSelect.innerHTML += `<option value="${p.id}">${p.name} (${p.avatar})</option>`;
+                        }
+                    });
+                    document.getElementById('target-player-select-box').classList.remove('hidden');
+                }
+
+                riskWheel.style.transition = 'none';
+                riskWheel.style.transform = `rotate(${targetRotation % 360}deg)`;
+                setTimeout(() => riskWheel.style.transition = 'transform 4s cubic-bezier(0.1, 0.7, 0.1, 1)', 50);
             }, 4100);
         }
 
-        function closeFateModal() {
-            document.getElementById('fate-modal').classList.remove('active');
+        function assignRiskSipsToTarget() {
+            document.getElementById('risk-wheel-modal').classList.remove('active');
+            if (pendingGlobalEvent) {
+                showRulePopup(pendingGlobalEvent);
+            } else {
+                checkEndGame();
+            }
+        }
+
+        function closeRiskWheelModal() {
+            document.getElementById('risk-wheel-modal').classList.remove('active');
+            if (pendingGlobalEvent) {
+                showRulePopup(pendingGlobalEvent);
+            } else {
+                checkEndGame();
+            }
+        }
+
+        function proceedToEventOrClose() {
+            document.getElementById('sunk-modal').classList.remove('active');
+            document.getElementById('risk-wheel-prompt-box').classList.add('hidden');
+            
             if (pendingGlobalEvent) {
                 showRulePopup(pendingGlobalEvent);
             } else {
@@ -1201,7 +1301,7 @@
             document.getElementById('game-screen').classList.remove('active');
             resetGameLogic();
             buildWheelHTML();
-            buildFateWheelHTML();
+            buildRiskWheelHTML();
             beginDraftTurn();
         }
 
