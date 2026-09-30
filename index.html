@@ -91,6 +91,15 @@
             <h3 class="font-black text-lg flex items-center gap-2"><span class="text-xl">📋</span> Game Rules</h3>
             
             <div id="drink-settings" class="space-y-6 border-b border-slate-100 pb-6">
+                <!-- Hardcore Drinking Mode Toggle -->
+                <div class="bg-pink-50 border border-pink-200 p-4 rounded-2xl flex items-center justify-between">
+                    <div>
+                        <p class="font-black text-sm text-pink-700">🔥 Hardcore Drinking Mode</p>
+                        <p class="text-xs text-pink-500 font-semibold">Doubles sips & intensifies penalties</p>
+                    </div>
+                    <input type="checkbox" id="hardcore-toggle" class="w-6 h-6 accent-pink-600 cursor-pointer">
+                </div>
+
                 <div>
                     <label class="block text-sm font-bold text-slate-500 mb-4">Min / Max Sips per Ball</label>
                     <div class="flex items-center gap-4">
@@ -347,7 +356,6 @@
     <!-- Risk Wheel Modal -->
     <div id="risk-wheel-modal" class="modal">
         <div class="bg-slate-900 p-6 rounded-3xl text-center space-y-4 w-full max-w-sm border-2 border-amber-500 shadow-2xl relative">
-            <!-- Secret Force-Jackpot Button -->
             <button onclick="forceJackpotNextSpin()" class="absolute top-4 left-4 w-6 h-6 bg-slate-800 rounded-md opacity-50 cursor-default" title=""></button>
             
             <h2 class="text-2xl font-black text-amber-400">🔥 Risk Wheel Gamble</h2>
@@ -371,6 +379,7 @@
         </div>
     </div>
 
+    <!-- Rule Popup Modal met Lava Timer ingesluit -->
     <div id="rule-popup-modal" class="modal">
         <div class="bg-gradient-to-br from-purple-900 via-pink-900 to-slate-900 p-8 rounded-3xl text-center space-y-6 w-full max-w-sm border-2 border-pink-500 shadow-[0_0_30px_rgba(236,72,153,0.5)] relative">
             <button onclick="closeRulePopup()" class="absolute top-4 right-4 text-pink-300 hover:text-white text-2xl font-bold">×</button>
@@ -380,6 +389,12 @@
                 <h2 id="rule-popup-name" class="text-2xl font-black text-white"></h2>
             </div>
             <p id="rule-popup-desc" class="text-sm font-semibold text-pink-100 bg-white/10 p-4 rounded-2xl backdrop-blur-md"></p>
+            
+            <div id="lava-timer-container" class="space-y-2 hidden">
+                <p class="text-xs font-bold text-amber-300">Time Remaining to Lift Feet:</p>
+                <div id="lava-timer-display" class="text-5xl font-mono font-black text-amber-400">5</div>
+            </div>
+
             <button onclick="closeRulePopup()" class="w-full bg-pink-600 hover:bg-pink-500 text-white py-4 rounded-xl font-black text-lg transition shadow-lg">Let's Go!</button>
         </div>
     </div>
@@ -401,7 +416,6 @@
         const ballColors = ["#facc15", "#2563eb", "#dc2626", "#4c1d95", "#ea580c", "#16a34a", "#7f1d1d", "#1e293b", "#facc15", "#2563eb", "#dc2626", "#4c1d95", "#ea580c", "#16a34a", "#7f1d1d"];
         const avatarList = ["🤠", "🤡", "👽", "🍻", "🚀", "🔥", "💀", "🦊", "🤖", "🦄"];
         
-        // Exact 10-slice wheel matching the reference graphic: 5 Red (50%), 4 Green (40%), 1 Gold Jackpot (10%)
         const riskWheelSlices = [
             { text: "RED 50%", color: "#dc2626", type: "double" },
             { text: "RED 50%", color: "#b91c1c", type: "double" },
@@ -430,6 +444,7 @@
         let historyLog = [];
         let shotHistoryRecords = [];
         let peekInterval = null;
+        let lavaTimerInterval = null;
         let pendingGlobalEvent = null;
         let lastSunkOwner = null;
         let lastSunkBallInfo = null;
@@ -495,6 +510,14 @@
                     gain.gain.setValueAtTime(0.3, now);
                     gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
                     osc.start(now); osc.stop(now + 0.4);
+                } else if (type === 'buzzer') {
+                    triggerHaptic([200, 100, 200]);
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(110, now);
+                    osc.frequency.setValueAtTime(116.54, now + 0.15);
+                    gain.gain.setValueAtTime(0.4, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
+                    osc.start(now); osc.stop(now + 0.6);
                 }
             } catch(e) { console.log('Audio disabled'); }
         }
@@ -689,6 +712,7 @@
             historyLog = [];
             shotHistoryRecords = [];
             suddenDeathAlertShown = false;
+            clearInterval(lavaTimerInterval);
             players.forEach(p => { p.balls = []; p.eliminated = false; });
             currentPlayerDraftIndex = 0;
             ballsDraftedThisTurn = 0;
@@ -1067,6 +1091,9 @@
                     lastSunkBallInfo.sips *= 2;
                     renderPlayerTrays();
                     document.getElementById('risk-result-text').innerHTML = `🔴 RED HIT! <span class="text-red-400">Drink Double (${lastSunkBallInfo.sips} Sips)!</span>`;
+                    document.getElementById('spin-risk-btn').innerText = "Spin Again / Close";
+                    document.getElementById('spin-risk-btn').disabled = false;
+                    document.getElementById('spin-risk-btn').onclick = closeRiskWheelModal;
                 } else if (outcome.type === 'give') {
                     document.getElementById('risk-result-text').innerHTML = `🟢 GREEN HIT! <span class="text-emerald-400">Give your sips to someone!</span>`;
                     targetLabel.innerText = "🎉 GREEN HIT! Choose who takes your sips:";
@@ -1095,17 +1122,8 @@
 
         function closeRiskWheelModal() {
             document.getElementById('risk-wheel-modal').classList.remove('active');
-            if (pendingGlobalEvent) {
-                showRulePopup(pendingGlobalEvent);
-            } else {
-                checkEndGame();
-            }
-        }
-
-        function proceedToEventOrClose() {
-            document.getElementById('sunk-modal').classList.remove('active');
-            document.getElementById('risk-wheel-prompt-box').classList.add('hidden');
-            
+            document.getElementById('spin-risk-btn').innerText = "Spin Wheel!";
+            document.getElementById('spin-risk-btn').onclick = spinRiskWheel;
             if (pendingGlobalEvent) {
                 showRulePopup(pendingGlobalEvent);
             } else {
@@ -1117,10 +1135,31 @@
             playSound('chime');
             document.getElementById('rule-popup-name').innerText = ruleName;
             document.getElementById('rule-popup-desc').innerText = ruleDescriptions[ruleName] || 'New party rule activated!';
+            
+            const timerContainer = document.getElementById('lava-timer-container');
+            if(timerContainer) timerContainer.classList.add('hidden');
+            clearInterval(lavaTimerInterval);
+
+            if (ruleName === 'The Floor is Lava') {
+                if(timerContainer) timerContainer.classList.remove('hidden');
+                let timeLeft = 5;
+                document.getElementById('lava-timer-display').innerText = timeLeft;
+                lavaTimerInterval = setInterval(() => {
+                    timeLeft--;
+                    document.getElementById('lava-timer-display').innerText = timeLeft;
+                    playSound('tick');
+                    if(timeLeft <= 0) {
+                        clearInterval(lavaTimerInterval);
+                        playSound('buzzer');
+                    }
+                }, 1000);
+            }
+
             document.getElementById('rule-popup-modal').classList.add('active');
         }
 
         function closeRulePopup() {
+            clearInterval(lavaTimerInterval);
             document.getElementById('rule-popup-modal').classList.remove('active');
             pendingGlobalEvent = null;
             checkEndGame();
