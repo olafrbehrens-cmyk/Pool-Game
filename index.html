@@ -171,10 +171,10 @@
         <p class="text-slate-500 font-bold text-sm bg-slate-100 inline-block px-4 py-2 rounded-full">Each player gets a ball. Keep it secret!</p>
         <p id="draft-status" class="text-xl font-black text-blue-600 mt-2"></p>
         
-        <div id="wheel-container" class="mt-4 mb-4">
+        <div id="wheel-container" class="mt-4 mb-4" style="background: white; border-color: #cbd5e1;">
             <div class="pointer"></div>
             <div id="wheel"></div>
-            <div class="wheel-peg"></div>
+            <div class="wheel-peg" style="background: #1e293b; border-color: #64748b;"></div>
         </div>
 
         <div class="flex items-center justify-center gap-2 mb-2">
@@ -344,16 +344,16 @@
         </div>
     </div>
 
-    <!-- Risk Wheel Modal (50% Red, 40% Green, 10% Gold Jackpot matching reference graphic) -->
+    <!-- Risk Wheel Modal Matching the Reference Graphic -->
     <div id="risk-wheel-modal" class="modal">
         <div class="bg-slate-900 p-6 rounded-3xl text-center space-y-4 w-full max-w-sm border-2 border-amber-500 shadow-2xl relative">
             <h2 class="text-2xl font-black text-amber-400">🔥 Risk Wheel Gamble</h2>
-            <p class="text-xs font-bold text-slate-400">50% Red (Double) | 40% Green (Give Sips) | 10% Gold Jackpot (Give Double)!</p>
+            <p class="text-xs font-bold text-slate-400">Same sips. Different consequences.</p>
             
-            <div id="risk-wheel-container" class="my-4">
-                <div class="pointer" style="border-top-color: #f59e0b;"></div>
+            <div id="risk-wheel-container" class="my-4" style="background: #0f172a; border-color: #1e293b;">
+                <div class="pointer" style="border-top-color: #ef4444;"></div>
                 <div id="risk-wheel"></div>
-                <div class="wheel-peg"></div>
+                <div class="wheel-peg" style="background: #cbd5e1; border-color: #0f172a;"></div>
             </div>
 
             <div id="target-player-select-box" class="space-y-2 hidden">
@@ -364,7 +364,7 @@
 
             <p id="risk-result-text" class="text-sm font-black text-white min-h-[40px] flex items-center justify-center bg-slate-800 rounded-xl p-2 border border-slate-700">Spin the wheel to test your luck!</p>
             <button id="spin-risk-btn" onclick="spinRiskWheel()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 py-3 rounded-xl font-black text-lg transition shadow-lg">Spin Wheel!</button>
-            <button onclick="closeRiskWheelModal()" class="w-full bg-slate-800 text-slate-300 py-2 rounded-xl font-bold text-sm">Close</button>
+            <button onclick="closeRiskWheelModal()" class="w-full bg-slate-800 text-slate-300 py-2 rounded-xl font-bold text-sm">Close / Spin Again</button>
         </div>
     </div>
 
@@ -398,18 +398,18 @@
         const ballColors = ["#facc15", "#2563eb", "#dc2626", "#4c1d95", "#ea580c", "#16a34a", "#7f1d1d", "#1e293b", "#facc15", "#2563eb", "#dc2626", "#4c1d95", "#ea580c", "#16a34a", "#7f1d1d"];
         const avatarList = ["🤠", "🤡", "👽", "🍻", "🚀", "🔥", "💀", "🦊", "🤖", "🦄"];
         
-        // Exact 10-slice wheel matching reference graphic: 5 Red (50%), 4 Green (40%), 1 Gold Jackpot (10%)
+        // Exact 10-slice wheel matching the reference graphic: 5 Red (50%), 4 Green (40%), 1 Gold Jackpot (10%)
         const riskWheelSlices = [
-            { text: "RED: Drink Double", color: "#dc2626", type: "double" },
-            { text: "RED: Drink Double", color: "#b91c1c", type: "double" },
-            { text: "RED: Drink Double", color: "#ef4444", type: "double" },
-            { text: "RED: Drink Double", color: "#991b1b", type: "double" },
-            { text: "RED: Drink Double", color: "#7f1d1d", type: "double" },
-            { text: "GREEN: Give Sips", color: "#16a34a", type: "give" },
-            { text: "GREEN: Give Sips", color: "#15803d", type: "give" },
-            { text: "GREEN: Give Sips", color: "#22c55e", type: "give" },
-            { text: "GREEN: Give Sips", color: "#166534", type: "give" },
-            { text: "GOLD: Jackpot Give Double", color: "#f59e0b", type: "jackpot" }
+            { text: "RED 50%", color: "#dc2626", type: "double" },
+            { text: "RED 50%", color: "#b91c1c", type: "double" },
+            { text: "RED 50%", color: "#ef4444", type: "double" },
+            { text: "RED 50%", color: "#991b1b", type: "double" },
+            { text: "RED 50%", color: "#7f1d1d", type: "double" },
+            { text: "GREEN 40%", color: "#16a34a", type: "give" },
+            { text: "GREEN 40%", color: "#15803d", type: "give" },
+            { text: "GREEN 40%", color: "#22c55e", type: "give" },
+            { text: "GREEN 40%", color: "#166534", type: "give" },
+            { text: "JACKPOT 10%", color: "#f59e0b", type: "jackpot" }
         ];
         
         let players = [];
@@ -593,11 +593,11 @@
                     slice.style.background = '#ffffff';
                     slice.innerHTML = `
                         <div class="slice-stripe-bg" style="background: ${color};"></div>
-                        <span class="slice-number">${i+1}</span>
+                        <span class="slice-number" style="color: #0f172a;">${i+1}</span>
                     `;
                 } else {
                     slice.style.backgroundColor = color;
-                    slice.innerHTML = `<span class="slice-number ${[1,2,3,4,6].includes(i) ? 'solid-light' : ''}" style="color: ${i === 7 ? 'white' : 'black'};">${i+1}</span>`;
+                    slice.innerHTML = `<span class="slice-number" style="color: ${i === 7 ? '#ffffff' : '#0f172a'};">${i+1}</span>`;
                 }
                 wheel.appendChild(slice);
             }
@@ -612,7 +612,7 @@
                 slice.className = 'slice';
                 slice.style.transform = `rotate(${i * sliceAngle}deg)`;
                 slice.style.backgroundColor = riskWheelSlices[i].color;
-                slice.innerHTML = `<span class="slice-number" style="color:white; font-size:9px;">${riskWheelSlices[i].type === 'double' ? 'RED<br>50%' : riskWheelSlices[i].type === 'give' ? 'GREEN<br>40%' : 'JACKPOT<br>10%'}</span>`;
+                slice.innerHTML = `<span class="slice-number" style="font-size:8px;">${riskWheelSlices[i].text.includes('RED') ? 'RED<br>50%' : riskWheelSlices[i].text.includes('GREEN') ? 'GREEN<br>40%' : 'JACKPOT<br>10%'}</span>`;
                 wheel.appendChild(slice);
             }
         }
@@ -1051,6 +1051,9 @@
                     lastSunkBallInfo.sips *= 2;
                     renderPlayerTrays();
                     document.getElementById('risk-result-text').innerHTML = `🔴 RED HIT! <span class="text-red-400">Drink Double (${lastSunkBallInfo.sips} Sips)!</span>`;
+                    document.getElementById('spin-risk-btn').innerText = "Spin Again / Close";
+                    document.getElementById('spin-risk-btn').disabled = false;
+                    document.getElementById('spin-risk-btn').onclick = closeRiskWheelModal;
                 } else if (outcome.type === 'give') {
                     document.getElementById('risk-result-text').innerHTML = `🟢 GREEN HIT! <span class="text-emerald-400">Give your sips to someone!</span>`;
                     targetLabel.innerText = "🎉 GREEN HIT! Choose who takes your sips:";
@@ -1079,6 +1082,8 @@
 
         function closeRiskWheelModal() {
             document.getElementById('risk-wheel-modal').classList.remove('active');
+            document.getElementById('spin-risk-btn').innerText = "Spin Wheel!";
+            document.getElementById('spin-risk-btn').onclick = spinRiskWheel;
             if (pendingGlobalEvent) {
                 showRulePopup(pendingGlobalEvent);
             } else {
@@ -1248,7 +1253,7 @@
                                 ${p.eliminated ? 'Eliminated' : 'Active'}
                             </button>
                         </div>
-                        <div class="grid grid-cols-2 gap-2">
+                        <div class="grid grid-cols-2 gap-3">
                             ${ballsHtml}
                         </div>
                     </div>
@@ -1275,7 +1280,7 @@
             document.getElementById('game-screen').classList.remove('active');
             resetGameLogic();
             buildWheelHTML();
-            buildRiskWheelHTML();
+            buildRiskWheelRiskWheelHTML();
             beginDraftTurn();
         }
 
