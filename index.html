@@ -18,16 +18,21 @@
         /* Premium Gradients */
         .bg-drinking { background: linear-gradient(135deg, #ec4899, #8b5cf6); }
         .bg-normal { background: linear-gradient(135deg, #3b82f6, #1e40af); }
-        .bg-glass { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); }
         .bg-dark-glass { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(15px); }
 
         /* Wheel Overhaul */
         #wheel-container { position: relative; width: 300px; height: 300px; margin: 0 auto; border-radius: 50%; border: 12px solid #cbd5e1; box-shadow: 0 10px 25px rgba(0,0,0,0.1), inset 0 0 15px rgba(0,0,0,0.3); background: white; }
         #wheel { width: 100%; height: 100%; border-radius: 50%; transition: transform 4s cubic-bezier(0.1, 0.7, 0.1, 1); position: relative; overflow: hidden; }
-        .slice { position: absolute; width: 44px; height: 50%; left: calc(50% - 22px); top: 0; transform-origin: bottom center; display: flex; justify-content: center; padding-top: 8px; font-weight: 900; font-size: 1.1rem; text-shadow: 0px 1px 2px rgba(0,0,0,0.8); }
-        /* Wheel Center Peg to hide seams */
+        .slice { position: absolute; width: 62px; height: 50%; left: calc(50% - 31px); top: 0; transform-origin: bottom center; display: flex; justify-content: center; padding-top: 10px; font-weight: 900; font-size: 1.25rem; text-shadow: 0px 1px 3px rgba(255,255,255,0.8); clip-path: polygon(0 0, 100% 0, 50% 100%); }
+        .slice-stripe-bg { position: absolute; top: 25%; bottom: 25%; left: 0; right: 0; z-index: 1; }
+        .slice-number { position: relative; z-index: 2; color: #0f172a; text-shadow: 0px 1px 2px rgba(255,255,255,0.9); }
+        .slice-number.solid-light { color: #ffffff; text-shadow: 0px 1px 2px rgba(0,0,0,0.8); }
+        
         .wheel-peg { position: absolute; width: 36px; height: 36px; background: #1e293b; border-radius: 50%; top: calc(50% - 18px); left: calc(50% - 18px); z-index: 10; border: 3px solid #64748b; box-shadow: 0 4px 6px rgba(0,0,0,0.5); }
         .pointer { position: absolute; top: -18px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 18px solid transparent; border-right: 18px solid transparent; border-top: 30px solid #3b82f6; z-index: 20; filter: drop-shadow(0 4px 4px rgba(0,0,0,0.3)); }
+
+        /* Draft Tray */
+        #drafted-balls-tray { min-height: 72px; background: #f1f5f9; border-radius: 1rem; border: 2px dashed #cbd5e1; display: flex; justify-content: center; align-items: center; gap: 8px; padding: 12px; flex-wrap: wrap; }
 
         /* Realistic Pool Table */
         #billiards-table { background: #155e30; border: 18px solid #78350f; border-radius: 16px; box-shadow: inset 0 0 30px rgba(0,0,0,0.6), 0 10px 25px rgba(0,0,0,0.15); position: relative; }
@@ -54,8 +59,6 @@
         @keyframes flipIn { 0% { transform: rotateY(90deg); opacity: 0; } 100% { transform: rotateY(0deg); opacity: 1; } }
         .shake { animation: shake 0.4s; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
-        
-        /* Confetti Burst */
         .confetti-bg { background-image: radial-gradient(circle, rgba(251, 191, 36, 0.2) 0%, transparent 60%); }
     </style>
 </head>
@@ -68,14 +71,12 @@
             <h1 class="text-4xl font-black tracking-tight text-slate-800">Pool Games</h1>
             <p class="text-slate-500 font-semibold text-lg">Secret balls. Real shots. Big consequences.</p>
         </div>
-        
         <div class="space-y-6">
             <button onclick="selectGameMode('drinking')" class="w-full bg-drinking rounded-3xl p-8 text-white shadow-xl transform transition hover:scale-[1.02]">
                 <div class="text-5xl mb-4">🍻</div>
                 <h2 class="text-3xl font-black mb-2">Drinking Game</h2>
                 <p class="font-semibold text-white/80">More shots. More laughs.</p>
             </button>
-
             <button onclick="selectGameMode('normal')" class="w-full bg-normal rounded-3xl p-8 text-white shadow-xl transform transition hover:scale-[1.02]">
                 <div class="text-5xl mb-4">🎱</div>
                 <h2 class="text-3xl font-black mb-2">Just For Fun</h2>
@@ -91,10 +92,8 @@
             <h2 id="setup-title" class="text-2xl font-black mx-auto pr-8">Match Setup</h2>
         </div>
 
-        <!-- Rules Section -->
         <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-6">
             <h3 class="font-black text-lg flex items-center gap-2"><span class="text-xl">📋</span> Game Rules</h3>
-            
             <div id="drink-settings" class="space-y-6 border-b border-slate-100 pb-6">
                 <div>
                     <label class="block text-sm font-bold text-slate-500 mb-4">Min / Max Sips per Ball</label>
@@ -123,7 +122,6 @@
                     </select>
                 </div>
             </div>
-
             <div class="grid grid-cols-2 gap-4">
                 <div>
                     <label class="block text-sm font-bold text-slate-500 mb-2">Players (2-7)</label>
@@ -134,10 +132,9 @@
                     <input type="number" id="balls-each" value="4" min="1" max="7" class="form-input bg-slate-50" onchange="renderPlayerInputs()">
                 </div>
             </div>
-            <p id="rack-warning" class="text-red-500 text-sm hidden font-bold bg-red-50 p-3 rounded-xl border border-red-100">Total balls cannot exceed 15!</p>
+            <p id="rack-warning" class="text-red-500 text-sm hidden font-bold bg-red-50 p-3 rounded-xl border border-red-100"></p>
         </div>
 
-        <!-- Players Section -->
         <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
             <h3 class="font-black text-lg mb-4 flex items-center gap-2"><span class="text-xl">👥</span> Players</h3>
             <div id="player-inputs" class="space-y-4"></div>
@@ -147,20 +144,24 @@
     </div>
 
     <!-- 3. DRAFT SCREEN -->
-    <div id="draft-screen" class="screen max-w-md mx-auto px-4 py-8 text-center space-y-8">
+    <div id="draft-screen" class="screen max-w-md mx-auto px-4 py-8 text-center space-y-6">
         <div class="flex items-center justify-between mb-2">
             <button onclick="goBackToSetup()" class="text-slate-500 font-bold text-xl">←</button>
             <h2 class="text-2xl font-black">Secret Draft</h2>
             <div class="w-6"></div>
         </div>
         <p class="text-slate-500 font-bold text-sm bg-slate-100 inline-block px-4 py-2 rounded-full">Each player gets a ball. Keep it secret!</p>
-        
         <p id="draft-status" class="text-xl font-black text-blue-600 mt-4"></p>
         
-        <div id="wheel-container" class="mt-8 mb-10">
+        <div id="wheel-container" class="mt-8 mb-6">
             <div class="pointer"></div>
             <div id="wheel"></div>
             <div class="wheel-peg"></div>
+        </div>
+        
+        <div class="mb-6 space-y-2">
+            <h4 class="text-sm font-bold text-slate-400 uppercase tracking-wider">Your Drafted Balls</h4>
+            <div id="drafted-balls-tray"></div>
         </div>
         
         <button id="spin-btn" onclick="spinWheel()" class="w-full bg-blue-600 text-white py-4 rounded-full font-black text-xl shadow-lg transition flex justify-center items-center gap-2">
@@ -179,7 +180,6 @@
             <div id="mode-badge" class="bg-drinking px-4 py-1.5 rounded-full text-white text-xs font-bold shadow-sm">Drinking Game</div>
         </div>
         
-        <!-- Live Table -->
         <div id="billiards-table" class="p-6 md:p-8 flex flex-wrap justify-center items-center gap-3 md:gap-5">
             <!-- Balls generated here -->
         </div>
@@ -192,7 +192,6 @@
             <button onclick="undoLastBall()" class="text-slate-400 hover:text-blue-500 text-sm font-bold transition">Undo Last Sink ↺</button>
         </div>
 
-        <!-- Player Trays -->
         <div id="player-trays" class="grid grid-cols-1 md:grid-cols-2 gap-4 pb-8">
             <!-- Trays generated here -->
         </div>
@@ -223,14 +222,12 @@
                 </div>
                 <button onclick="closeKeypad()" class="text-slate-400 hover:text-white text-2xl font-bold w-6">×</button>
             </div>
-            
             <div class="flex justify-center gap-4 mb-6" id="pin-dots">
                 <div class="pin-dot"></div>
                 <div class="pin-dot"></div>
                 <div class="pin-dot"></div>
                 <div class="pin-dot"></div>
             </div>
-            
             <div class="grid grid-cols-3 gap-4 text-white">
                 <button onclick="pressPin('1')" class="bg-white/10 hover:bg-white/20 py-4 rounded-2xl text-2xl font-bold backdrop-blur-md transition">1</button>
                 <button onclick="pressPin('2')" class="bg-white/10 hover:bg-white/20 py-4 rounded-2xl text-2xl font-bold backdrop-blur-md transition">2</button>
@@ -245,6 +242,17 @@
                 <button onclick="pressPin('0')" class="bg-white/10 hover:bg-white/20 py-4 rounded-2xl text-2xl font-bold backdrop-blur-md transition">0</button>
                 <button onclick="closeKeypad()" class="bg-white/10 hover:bg-white/20 py-4 rounded-2xl text-2xl font-bold backdrop-blur-md transition text-red-400">✖</button>
             </div>
+        </div>
+    </div>
+
+    <!-- Peek Modal -->
+    <div id="peek-modal" class="modal">
+        <div class="bg-white p-6 rounded-3xl text-center space-y-4 w-full max-w-sm shadow-2xl border-4 border-blue-500">
+            <h2 id="peek-name" class="text-2xl font-black text-blue-600">Your Hand</h2>
+            <p id="admin-badge" class="text-xs font-bold bg-amber-100 text-amber-700 px-3 py-1 rounded-full hidden inline-block tracking-wide">Admin Override Used</p>
+            <p class="text-sm font-bold text-slate-500 bg-slate-100 py-2 rounded-lg">Auto-locking in <span id="peek-timer" class="text-blue-600 text-lg">5</span>s</p>
+            <div id="peek-balls-container" class="flex flex-wrap justify-center gap-3 max-h-[40vh] overflow-y-auto p-4 bg-slate-50 rounded-xl border border-slate-200"></div>
+            <button onclick="closePeek()" class="w-full bg-slate-800 text-white py-4 rounded-xl font-black text-lg shadow-md mt-2">Hide & Lock Now</button>
         </div>
     </div>
 
@@ -268,6 +276,7 @@
             <p id="end-desc" class="text-lg font-bold text-slate-500 bg-slate-50 p-4 rounded-xl border border-slate-100"></p>
             <div class="space-y-3 pt-4">
                 <button onclick="rematchSame()" class="w-full bg-blue-600 text-white py-4 rounded-xl font-black text-lg shadow-md transition">Play Again (Same Squad)</button>
+                <button onclick="rematchModify()" class="w-full bg-emerald-500 text-white py-4 rounded-xl font-black text-lg shadow-md transition">Add / Modify Players</button>
                 <button onclick="location.reload()" class="w-full bg-slate-100 text-slate-600 hover:bg-slate-200 py-4 rounded-xl font-bold text-lg transition">Main Menu</button>
             </div>
         </div>
@@ -290,6 +299,7 @@
         let currentPinInput = "";
         let playerToUnlock = null;
         let historyLog = [];
+        let peekInterval = null;
 
         function selectGameMode(mode) {
             isDrinkingGame = (mode === 'drinking');
@@ -311,15 +321,20 @@
         }
 
         function renderPlayerInputs() {
-            const count = parseInt(document.getElementById('player-count').value);
+            let count = parseInt(document.getElementById('player-count').value);
+            if(count < 2) {
+                count = 2;
+                document.getElementById('player-count').value = 2;
+            }
             ballsPerPlayer = parseInt(document.getElementById('balls-each').value);
             const container = document.getElementById('player-inputs');
+            const warning = document.getElementById('rack-warning');
             
             if (count * ballsPerPlayer > 15) {
-                document.getElementById('rack-warning').classList.remove('hidden');
-                return;
+                warning.innerText = `Error: ${count} players × ${ballsPerPlayer} balls = ${count * ballsPerPlayer}. Total cannot exceed 15!`;
+                warning.classList.remove('hidden');
             } else {
-                document.getElementById('rack-warning').classList.add('hidden');
+                warning.classList.add('hidden');
             }
 
             container.innerHTML = '';
@@ -332,7 +347,7 @@
                     <div class="flex items-center gap-3">
                         <div class="w-8 h-8 rounded-full ${badgeColor} text-white flex items-center justify-center font-black text-sm flex-shrink-0">${i+1}</div>
                         <input type="text" id="p-name-${i}" value="${name}" placeholder="Name" class="form-input flex-1">
-                        <input type="text" id="p-pin-${i}" value="${pin}" placeholder="PIN" maxlength="4" class="form-input w-24 text-center tracking-widest font-mono font-bold" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                        <input type="password" inputmode="numeric" pattern="[0-9]*" id="p-pin-${i}" value="${pin}" placeholder="PIN" maxlength="4" class="form-input w-24 text-center tracking-widest font-mono font-bold" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                     </div>`;
             }
         }
@@ -340,7 +355,7 @@
         function buildWheelHTML() {
             const wheel = document.getElementById('wheel');
             wheel.innerHTML = '';
-            const sliceAngle = 360 / 15; // 24 degrees
+            const sliceAngle = 360 / 15; 
             for(let i = 0; i < 15; i++) {
                 const slice = document.createElement('div');
                 slice.className = 'slice';
@@ -348,15 +363,14 @@
                 
                 const color = ballColors[i];
                 if(i >= 8 && i !== 7) { 
-                    slice.style.background = color;
-                    // Apply stripe visually using inner div to avoid messing with layout
-                    slice.innerHTML = `<div style="position:absolute; inset:0; background: #fff; z-index:0;"></div>
-                                       <div style="position:absolute; top:20%; bottom:20%; left:0; right:0; background: ${color}; z-index:1;"></div>
-                                       <span style="position:relative; z-index:2; color: #0f172a;">${i+1}</span>`;
+                    slice.style.background = '#ffffff';
+                    slice.innerHTML = `
+                        <div class="slice-stripe-bg" style="background: ${color};"></div>
+                        <span class="slice-number">${i+1}</span>
+                    `;
                 } else {
                     slice.style.backgroundColor = color;
-                    slice.style.color = (i === 7) ? "white" : "black";
-                    slice.innerHTML = `<span>${i+1}</span>`;
+                    slice.innerHTML = `<span class="slice-number ${[1,2,3,4,6].includes(i) ? 'solid-light' : ''}" style="color: ${i === 7 ? 'white' : 'black'};">${i+1}</span>`;
                 }
                 wheel.appendChild(slice);
             }
@@ -366,32 +380,48 @@
             const idx = num - 1;
             const color = ballColors[idx];
             const isStripe = num > 8;
-            const textCol = num === 8 ? 'white' : 'black';
             
             let html = `<div class="pool-ball" style="background: ${isStripe ? 'white' : color};">`;
             if (isStripe) {
                 html += `<div class="stripe-bg" style="background: ${color}; top: 15%; bottom: 15%; left: 0; right: 0;"></div>`;
             }
-            html += `<div class="circle" style="color: ${textCol};">${num}</div></div>`;
+            html += `<div class="circle" style="color: black; background: white;">${num}</div></div>`;
             return html;
         }
 
         function startGame() {
-            if(!document.getElementById('rack-warning').classList.contains('hidden')) return;
+            const count = parseInt(document.getElementById('player-count').value);
+            const balls = parseInt(document.getElementById('balls-each').value);
+            const warning = document.getElementById('rack-warning');
+
+            if (count < 2) {
+                warning.innerText = "Error: Minimum 2 players required!";
+                warning.classList.remove('hidden');
+                return;
+            }
+            if (count * balls > 15) {
+                warning.innerText = `Error: ${count} players × ${balls} balls = ${count * balls}. Total cannot exceed 15!`;
+                warning.classList.remove('hidden');
+                return;
+            }
             
             minSips = parseInt(document.getElementById('min-sips').value);
             maxSips = parseInt(document.getElementById('max-sips').value);
             loserPenalty = document.getElementById('loser-penalty').value;
             
-            const count = parseInt(document.getElementById('player-count').value);
             players = [];
             for(let i=0; i<count; i++) {
                 const name = document.getElementById(`p-name-${i}`).value || `Player ${i+1}`;
                 const pin = document.getElementById(`p-pin-${i}`).value;
-                if(pin.length !== 4) { alert(`Please enter a 4-digit PIN for ${name}`); return; }
+                if(pin.length !== 4) { 
+                    warning.innerText = `Error: Please enter a full 4-digit PIN for ${name}`;
+                    warning.classList.remove('hidden');
+                    return; 
+                }
                 players.push({ name, pin, balls: [], eliminated: false, id: i });
             }
             
+            warning.classList.add('hidden');
             resetGameLogic();
             buildWheelHTML();
             document.getElementById('setup-screen').classList.remove('active');
@@ -411,6 +441,7 @@
             document.getElementById('draft-screen').classList.add('active');
             ballsDraftedThisTurn = 0;
             document.getElementById('spin-btn').disabled = false;
+            document.getElementById('drafted-balls-tray').innerHTML = '';
             updateDraftStatus();
             
             document.getElementById('handoff-text').innerText = `Hand it to ${players[currentPlayerDraftIndex].name}`;
@@ -434,21 +465,23 @@
             availableBalls.splice(randomIndex, 1);
             
             const sips = isDrinkingGame ? Math.floor(Math.random() * (maxSips - minSips + 1)) + minSips : 0;
-            
             const sliceAngle = 360 / 15;
-            // The pointer is at the top (0 degrees). Target number position logic:
-            // Slices are rendered 0 to 14 starting at top and going clockwise.
             const targetRotation = (360 * 5) - ((chosenBall - 1) * sliceAngle); 
             
             const wheel = document.getElementById('wheel');
             wheel.style.transform = `rotate(${targetRotation}deg)`;
             
             setTimeout(() => {
-                players[currentPlayerDraftIndex].balls.push({ num: chosenBall, sips: sips, sunk: false, revealed: false });
+                players[currentPlayerDraftIndex].balls.push({ num: chosenBall, sips: sips, sunk: false });
                 ballsDraftedThisTurn++;
                 
-                // Show a quick visual confirmation outside the wheel area (since we keep all balls on wheel)
-                // Just an auto-dismissing toast or proceed.
+                // Add ball to tray
+                const tray = document.getElementById('drafted-balls-tray');
+                const ballEl = document.createElement('div');
+                ballEl.className = 'transform scale-[0.8] origin-center animate-[flipIn_0.4s_ease-out]';
+                ballEl.innerHTML = createBallHTML(chosenBall);
+                tray.appendChild(ballEl);
+
                 wheel.style.transition = 'none';
                 wheel.style.transform = `rotate(${targetRotation % 360}deg)`;
                 setTimeout(() => wheel.style.transition = 'transform 4s cubic-bezier(0.1, 0.7, 0.1, 1)', 50);
@@ -457,7 +490,8 @@
                     document.getElementById('spin-btn').disabled = false;
                     updateDraftStatus();
                 } else {
-                    setTimeout(nextDraftPlayer, 1000);
+                    document.getElementById('draft-status').innerText = "Turn Complete!";
+                    setTimeout(nextDraftPlayer, 1500);
                 }
             }, 4100);
         }
@@ -499,10 +533,9 @@
                 const badgeColor = playerBadgeColors[p.id % playerBadgeColors.length];
                 const liveCount = p.balls.filter(b => !b.sunk).length;
                 const totalSips = p.balls.filter(b => b.sunk).reduce((sum, b) => sum + b.sips, 0);
-                const isEliminated = p.eliminated || liveCount === 0;
+                const isEliminated = p.eliminated || (ballsDraftedThisTurn > 0 && liveCount === 0);
 
                 let ballsHTML = '';
-                // Render all assigned balls
                 p.balls.forEach(b => {
                     if(!b.sunk) {
                         ballsHTML += `<div class="hidden-ball">?</div>`;
@@ -514,8 +547,6 @@
                             </div>`;
                     }
                 });
-
-                // Fill remainder with empty if less than max balls? Not needed since balls = max.
 
                 trays.innerHTML += `
                     <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between ${isEliminated ? 'opacity-50 grayscale' : ''}">
@@ -630,20 +661,15 @@
         function closeSunk() { document.getElementById('sunk-modal').classList.remove('active'); checkEndGame(); }
 
         function checkWinCondition() {
-            // Count total live player balls in the game
             let totalLivePlayerBalls = 0;
-            players.forEach(p => {
-                totalLivePlayerBalls += p.balls.filter(b => !b.sunk).length;
-            });
+            players.forEach(p => { totalLivePlayerBalls += p.balls.filter(b => !b.sunk).length; });
 
             const activeTableBalls = tableBalls.filter(b => !b.sunk).length;
             const livePlayers = players.filter(p => p.balls.filter(b => !b.sunk).length > 0);
             
-            // Mutual Loss: 0 player balls left on the board across everyone
             if(totalLivePlayerBalls === 0) {
                 triggerGameOver(null, true);
             } 
-            // Last Ball Standing: 1 ball left on the physical table, and it belongs to a player
             else if(activeTableBalls === 1 && livePlayers.length === 1) {
                 triggerGameOver(livePlayers[0], false);
             }
@@ -700,8 +726,7 @@
             const adminUsed = currentPinInput === "1793";
             if(currentPinInput === playerToUnlock.pin || adminUsed) {
                 closeKeypad();
-                // We use standard sunk modal for peek but altered visually
-                showTemporaryPeek();
+                showPeekModal(adminUsed);
             } else {
                 const kp = document.getElementById('keypad-modal').firstElementChild;
                 kp.classList.add('shake');
@@ -713,12 +738,38 @@
 
         function closeKeypad() { document.getElementById('keypad-modal').classList.remove('active'); }
 
-        function showTemporaryPeek() {
-            // Momentarily display their hand by un-hiding their unrevealed balls 
-            // the player tray logic already builds it. We'll simply alert them.
-            alert("Security Note: Building a full custom peek modal takes extra code, so for now, remember your PIN! Admin 1793 unlocked access.");
-            // In a full environment, you would duplicate the 'Peek Hand' modal here.
-            // For concise implementation, unlocking allows a secure action.
+        function showPeekModal(adminUsed) {
+            document.getElementById('peek-modal').classList.add('active');
+            document.getElementById('peek-name').innerText = `${playerToUnlock.name}'s Hand`;
+            document.getElementById('admin-badge').style.display = adminUsed ? 'inline-block' : 'none';
+            
+            const container = document.getElementById('peek-balls-container');
+            container.innerHTML = '';
+            
+            playerToUnlock.balls.forEach(b => {
+                const html = `
+                    <div class="flex flex-col items-center bg-white p-3 rounded-xl border border-slate-200 shadow-sm ${b.sunk ? 'opacity-50 grayscale' : ''}">
+                        ${createBallHTML(b.num)}
+                        <span class="text-xs font-black mt-2 ${b.sunk ? 'text-red-500' : 'text-emerald-500'}">${b.sunk ? 'SUNK' : 'ALIVE'}</span>
+                        ${isDrinkingGame ? `<span class="text-[10px] font-bold text-slate-400 mt-1">${b.sips} SIPS</span>` : ''}
+                    </div>
+                `;
+                container.innerHTML += html;
+            });
+            
+            let timeLeft = 5;
+            document.getElementById('peek-timer').innerText = timeLeft;
+            clearInterval(peekInterval);
+            peekInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('peek-timer').innerText = timeLeft;
+                if(timeLeft <= 0) closePeek();
+            }, 1000);
+        }
+
+        function closePeek() {
+            clearInterval(peekInterval);
+            document.getElementById('peek-modal').classList.remove('active');
         }
 
         function rematchSame() {
@@ -729,6 +780,13 @@
             beginDraftTurn();
         }
 
+        function rematchModify() {
+            document.getElementById('end-modal').classList.remove('active');
+            document.getElementById('game-screen').classList.remove('active');
+            document.getElementById('setup-screen').classList.add('active');
+        }
+
     </script>
 </body>
 </html>
+
