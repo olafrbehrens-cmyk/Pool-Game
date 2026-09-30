@@ -45,7 +45,9 @@
         .ball-sunk { opacity: 0.15; filter: grayscale(100%); pointer-events: none; }
 
         .hidden-ball { width: 44px; height: 44px; border-radius: 50%; background: #e2e8f0; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-weight: 800; font-size: 1.2rem; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); border: 2px solid #cbd5e1; flex-shrink: 0; }
-        .revealed-ball-container { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        
+        /* Stacked Ball Row in Player Trays */
+        .revealed-ball-container { display: flex; flex-direction: column; align-items: center; gap: 4px; background: #f8fafc; padding: 8px 10px; border-radius: 12px; border: 1px solid #e2e8f0; min-width: 70px; }
         
         .form-input { width: 100%; padding: 12px 16px; border-radius: 12px; border: 2px solid #e2e8f0; font-weight: 600; outline: none; transition: border-color 0.2s; background: white; }
         .form-input:focus { border-color: #3b82f6; }
@@ -93,6 +95,15 @@
             <h3 class="font-black text-lg flex items-center gap-2"><span class="text-xl">📋</span> Game Rules</h3>
             
             <div id="drink-settings" class="space-y-6 border-b border-slate-100 pb-6">
+                <!-- Hardcore Drinking Mode Toggle -->
+                <div class="bg-pink-50 border border-pink-200 p-4 rounded-2xl flex items-center justify-between">
+                    <div>
+                        <p class="font-black text-sm text-pink-700">🔥 Hardcore Drinking Mode</p>
+                        <p class="text-xs text-pink-500 font-semibold">Doubles sips & intensifies penalties</p>
+                    </div>
+                    <input type="checkbox" id="hardcore-toggle" class="w-6 h-6 accent-pink-600 cursor-pointer">
+                </div>
+
                 <div>
                     <label class="block text-sm font-bold text-slate-500 mb-4">Min / Max Sips per Ball</label>
                     <div class="flex items-center gap-4">
@@ -121,24 +132,24 @@
                     </select>
                 </div>
 
-                <!-- Let's Get Dangerous Global Events Toggle & Rules -->
+                <!-- Let's Get Dangerous Global Events Toggle & Vertical Rules List -->
                 <div class="pt-2 border-t border-slate-100">
                     <div class="flex items-center justify-between mb-3">
                         <span class="font-black text-sm text-slate-700 flex items-center gap-1.5">⚡ Let's Get Dangerous</span>
                         <input type="checkbox" id="dangerous-toggle" checked class="w-5 h-5 accent-pink-500 cursor-pointer" onchange="toggleDangerousSettings(this.checked)">
                     </div>
-                    <div id="dangerous-rules-container" class="space-y-2 bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 max-h-48 overflow-y-auto">
-                        <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="rule-chk accent-pink-500" value="8-Ball Special" checked> 🎱 8-Ball Special</label>
-                        <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="rule-chk accent-pink-500" value="Left-Handed Only" checked> 👈 Left-Handed Only</label>
-                        <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="rule-chk accent-pink-500" value="Waterfall" checked> 🌊 Waterfall</label>
-                        <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="rule-chk accent-pink-500" value="The Buffalo Rule" checked> 🐃 The Buffalo Rule</label>
-                        <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="rule-chk accent-pink-500" value="Give a Sip" checked> 🎁 Give a Sip</label>
-                        <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="rule-chk accent-pink-500" value="No Names (Question Master)" checked> 🤐 No Names (Question Master)</label>
-                        <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="rule-chk accent-pink-500" value="Thumb Master" checked> 👍 Thumb Master</label>
-                        <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="rule-chk accent-pink-500" value="Rhyme Time" checked> 🎵 Rhyme Time</label>
-                        <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="rule-chk accent-pink-500" value="The Floor is Lava" checked> 🌋 The Floor is Lava (w/ Timer & Buzzer)</label>
-                        <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="rule-chk accent-pink-500" value="Category Game" checked> 🧠 Category Game</label>
-                        <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" class="rule-chk accent-pink-500" value="Social (Cheers)" checked> 🥂 Social (Cheers)</label>
+                    <div id="dangerous-rules-container" class="space-y-2.5 bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 max-h-56 overflow-y-auto flex flex-col">
+                        <label class="flex items-center gap-3 cursor-pointer py-1 border-b border-slate-200/60"><input type="checkbox" class="rule-chk accent-pink-500 w-4 h-4" value="8-Ball Special" checked> 🎱 8-Ball Special</label>
+                        <label class="flex items-center gap-3 cursor-pointer py-1 border-b border-slate-200/60"><input type="checkbox" class="rule-chk accent-pink-500 w-4 h-4" value="Left-Handed Only" checked> 👈 Left-Handed Only</label>
+                        <label class="flex items-center gap-3 cursor-pointer py-1 border-b border-slate-200/60"><input type="checkbox" class="rule-chk accent-pink-500 w-4 h-4" value="Waterfall" checked> 🌊 Waterfall</label>
+                        <label class="flex items-center gap-3 cursor-pointer py-1 border-b border-slate-200/60"><input type="checkbox" class="rule-chk accent-pink-500 w-4 h-4" value="The Buffalo Rule" checked> 🐃 The Buffalo Rule</label>
+                        <label class="flex items-center gap-3 cursor-pointer py-1 border-b border-slate-200/60"><input type="checkbox" class="rule-chk accent-pink-500 w-4 h-4" value="Give a Sip" checked> 🎁 Give a Sip</label>
+                        <label class="flex items-center gap-3 cursor-pointer py-1 border-b border-slate-200/60"><input type="checkbox" class="rule-chk accent-pink-500 w-4 h-4" value="No Names (Question Master)" checked> 🤐 No Names (Question Master)</label>
+                        <label class="flex items-center gap-3 cursor-pointer py-1 border-b border-slate-200/60"><input type="checkbox" class="rule-chk accent-pink-500 w-4 h-4" value="Thumb Master" checked> 👍 Thumb Master</label>
+                        <label class="flex items-center gap-3 cursor-pointer py-1 border-b border-slate-200/60"><input type="checkbox" class="rule-chk accent-pink-500 w-4 h-4" value="Rhyme Time" checked> 🎵 Rhyme Time</label>
+                        <label class="flex items-center gap-3 cursor-pointer py-1 border-b border-slate-200/60"><input type="checkbox" class="rule-chk accent-pink-500 w-4 h-4" value="The Floor is Lava" checked> 🌋 The Floor is Lava (w/ Timer & Buzzer)</label>
+                        <label class="flex items-center gap-3 cursor-pointer py-1 border-b border-slate-200/60"><input type="checkbox" class="rule-chk accent-pink-500 w-4 h-4" value="Category Game" checked> 🧠 Category Game</label>
+                        <label class="flex items-center gap-3 cursor-pointer py-1"><input type="checkbox" class="rule-chk accent-pink-500 w-4 h-4" value="Social (Cheers)" checked> 🥂 Social (Cheers)</label>
                     </div>
                 </div>
             </div>
@@ -197,12 +208,24 @@
 
     <!-- 4. GAME SCREEN -->
     <div id="game-screen" class="screen max-w-4xl mx-auto px-4 py-6 space-y-6">
-        <div class="flex justify-between items-center bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
-            <h2 class="text-xl font-black flex items-center gap-2"><span>☰</span> Pool Numbers <span class="text-xs bg-slate-100 px-2 py-0.5 rounded font-mono">v1.6</span></h2>
-            <div id="mode-badge" class="bg-drinking px-4 py-1.5 rounded-full text-white text-xs font-bold shadow-sm">Drinking Game</div>
+        <div class="flex justify-between items-center bg-white p-4 rounded-2xl shadow-sm border border-slate-100 relative">
+            <h2 class="text-xl font-black flex items-center gap-2"><span>🎱</span> Pool Numbers <span class="text-xs bg-slate-100 px-2 py-0.5 rounded font-mono">v1.6</span></h2>
+            
+            <div class="flex items-center gap-3">
+                <div id="mode-badge" class="bg-drinking px-4 py-1.5 rounded-full text-white text-xs font-bold shadow-sm">Drinking Game</div>
+                
+                <!-- Top Right Game Menu Dropdown -->
+                <div class="relative">
+                    <button onclick="toggleGameMenu()" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center font-bold text-slate-700 transition">☰</button>
+                    <div id="game-menu-dropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-2xl shadow-xl border border-slate-100 py-2 hidden z-40">
+                        <button onclick="openAdminModal()" class="w-full text-left px-4 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-50 flex items-center gap-2"><span>🛡</span> Admin Controls</button>
+                        <button onclick="location.reload()" class="w-full text-left px-4 py-2.5 text-sm font-bold text-red-600 hover:bg-red-50 flex items-center gap-2"><span>🚪</span> Exit to Menu</button>
+                    </div>
+                </div>
+            </div>
         </div>
         
-        <!-- Persistent Active Rules Ticker (If Dangerous enabled) -->
+        <!-- Persistent Active Rules Ticker -->
         <div id="active-rules-banner" class="bg-pink-50 border border-pink-200 p-3 rounded-xl flex items-center gap-3 hidden">
             <span class="text-xl animate-bounce">⚡</span>
             <div class="overflow-hidden whitespace-nowrap flex-1">
@@ -222,6 +245,7 @@
             <button onclick="undoLastBall()" class="text-slate-400 hover:text-blue-500 text-sm font-bold transition">Undo Last Sink ↺</button>
         </div>
 
+        <!-- Player Trays: Vertical Stack for Sunk Balls -->
         <div id="player-trays" class="grid grid-cols-1 md:grid-cols-2 gap-4 pb-8">
             <!-- Trays generated here -->
         </div>
@@ -286,23 +310,48 @@
         </div>
     </div>
 
-    <!-- Sunk Alert & Global Event Modal -->
+    <!-- Admin Control Panel Modal -->
+    <div id="admin-modal" class="modal">
+        <div class="bg-white p-6 rounded-3xl space-y-4 w-full max-w-lg shadow-2xl border border-slate-200 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <h2 class="text-xl font-black text-slate-800 flex items-center gap-2"><span>🛡️</span> Admin Control Panel</h2>
+                <button onclick="closeAdminModal()" class="text-slate-400 hover:text-slate-800 text-2xl font-bold">×</button>
+            </div>
+            <div class="space-y-4 text-left">
+                <p class="text-xs font-bold text-slate-400">Modify player names, avatars, or adjust individual ball assignments and sips mid-game.</p>
+                <div id="admin-players-list" class="space-y-4"></div>
+            </div>
+            <button onclick="closeAdminModal(); renderPlayerTrays(); renderTable();" class="w-full bg-slate-900 text-white py-3 rounded-xl font-black text-base shadow-md">Apply & Close</button>
+        </div>
+    </div>
+
+    <!-- Sunk Alert (Step 1: Penalty) -->
     <div id="sunk-modal" class="modal">
         <div class="bg-dark-glass p-8 rounded-3xl text-center space-y-4 w-full max-w-sm border border-slate-700/50 shadow-2xl relative confetti-bg">
-            <button onclick="closeSunk()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-2xl font-bold">×</button>
+            <button onclick="proceedToEventOrClose()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-2xl font-bold">×</button>
             <div id="sunk-ball-display" class="flex justify-center transform scale-[1.8] my-6 drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]"></div>
             <h2 id="sunk-title" class="text-2xl font-black text-white"></h2>
-            
-            <!-- Global Event Box -->
-            <div id="global-event-box" class="bg-pink-600/30 border border-pink-500 p-4 rounded-2xl space-y-2 hidden">
-                <p class="text-xs font-black uppercase tracking-widest text-pink-300">⚡ Global Event Triggered!</p>
-                <p id="global-event-rule-name" class="text-xl font-black text-white"></p>
-                <div id="lava-timer-display" class="text-4xl font-mono font-black text-amber-400 hidden">5</div>
-            </div>
-
             <div id="sunk-drink-order" class="text-4xl font-black text-amber-500 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] italic hidden"></div>
             <p id="sunk-desc" class="text-sm font-bold text-slate-300 pb-2"></p>
-            <button onclick="closeSunk()" class="w-full bg-blue-600 text-white py-4 rounded-xl font-black text-lg transition shadow-lg">Got it</button>
+            <button onclick="proceedToEventOrClose()" class="w-full bg-blue-600 text-white py-4 rounded-xl font-black text-lg transition shadow-lg">Continue</button>
+        </div>
+    </div>
+
+    <!-- Party Rule Announcement Pop-Up (Step 2: Distinct Neon Vibe) -->
+    <div id="rule-popup-modal" class="modal">
+        <div class="bg-gradient-to-br from-purple-900 via-pink-900 to-slate-900 p-8 rounded-3xl text-center space-y-6 w-full max-w-sm border-2 border-pink-500 shadow-[0_0_30px_rgba(236,72,153,0.5)] relative">
+            <button onclick="closeRulePopup()" class="absolute top-4 right-4 text-pink-300 hover:text-white text-2xl font-bold">×</button>
+            <div class="w-16 h-16 bg-pink-500/20 border border-pink-400 rounded-full flex items-center justify-center mx-auto text-3xl animate-bounce">⚡</div>
+            <div class="space-y-2">
+                <p class="text-xs font-black uppercase tracking-widest text-pink-300">Party Game Triggered!</p>
+                <h2 id="rule-popup-name" class="text-2xl font-black text-white"></h2>
+            </div>
+            <p id="rule-popup-desc" class="text-sm font-semibold text-pink-100 bg-white/10 p-4 rounded-2xl backdrop-blur-md"></p>
+            <div id="lava-timer-container" class="space-y-2 hidden">
+                <p class="text-xs font-bold text-amber-300">Time Remaining to Lift Feet:</p>
+                <div id="lava-timer-display" class="text-5xl font-mono font-black text-amber-400">5</div>
+            </div>
+            <button onclick="closeRulePopup()" class="w-full bg-pink-600 hover:bg-pink-500 text-white py-4 rounded-xl font-black text-lg transition shadow-lg">Let's Go!</button>
         </div>
     </div>
 
@@ -332,6 +381,7 @@
         let ballsPerPlayer = 4;
         let isDrinkingGame = true;
         let minSips = 1, maxSips = 5;
+        let hardcoreMode = false;
         let loserPenalty = "";
         
         let currentPinInput = "";
@@ -339,21 +389,30 @@
         let historyLog = [];
         let peekInterval = null;
         let lavaTimerInterval = null;
+        let pendingGlobalEvent = null;
         
-        // Dangerous Rule States
         let dangerousEnabled = true;
         let activeRulesPool = [];
         let currentActiveRules = [];
 
-        // Web Audio API Synthesizer (Game Feel Sound Effects)
+        const ruleDescriptions = {
+            '8-Ball Special': 'The black 8-ball was sunk! All players take a collective group penalty sip!',
+            'Left-Handed Only': 'The ball owner must drink and play using exclusively their non-dominant hand for the rest of the game!',
+            'Waterfall': 'Everyone starts drinking simultaneously! The shooter cannot stop until the person to their right stops.',
+            'The Buffalo Rule': 'Anyone caught holding or drinking with their right hand for the rest of the game instantly takes an extra sip penalty!',
+            'Give a Sip': 'Instead of taking sips yourself, you get to assign your sip count directly to any opponent at the table!',
+            'No Names (Question Master)': 'Real names are banned! If caught or if you respond to the Question Master, you drink.',
+            'Thumb Master': 'The shooter can silently place their thumb on the table frame. Last player to copy takes a sip!',
+            'Rhyme Time': 'A word is spoken out loud. Cycle through rhymes clockwise without repeating or stalling!',
+            'The Floor is Lava': 'Lift your feet off the ground within 5 seconds before the buzzer sounds!',
+            'Category Game': 'Rapid-fire category naming! Repeating or freezing incurs an instant sip penalty.',
+            'Social (Cheers)': 'Instant group toast! Everyone raises their glass, says Cheers, and takes a sip.'
+        };
+
         let audioCtx = null;
         function getAudioContext() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
+            if (!audioCtx) { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+            if (audioCtx.state === 'suspended') { audioCtx.resume(); }
             return audioCtx;
         }
 
@@ -372,40 +431,50 @@
                     osc.frequency.exponentialRampToValueAtTime(80, now + 0.08);
                     gain.gain.setValueAtTime(0.5, now);
                     gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
-                    osc.start(now);
-                    osc.stop(now + 0.08);
+                    osc.start(now); osc.stop(now + 0.08);
                 } else if (type === 'tick') {
                     osc.type = 'square';
                     osc.frequency.setValueAtTime(800, now);
                     gain.gain.setValueAtTime(0.1, now);
                     gain.gain.exponentialRampToValueAtTime(0.01, now + 0.03);
-                    osc.start(now);
-                    osc.stop(now + 0.03);
+                    osc.start(now); osc.stop(now + 0.03);
                 } else if (type === 'chime') {
                     osc.type = 'sine';
-                    osc.frequency.setValueAtTime(523.25, now); // C5
-                    osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
-                    osc.frequency.setValueAtTime(783.99, now + 0.2); // G5
+                    osc.frequency.setValueAtTime(523.25, now);
+                    osc.frequency.setValueAtTime(659.25, now + 0.1);
+                    osc.frequency.setValueAtTime(783.99, now + 0.2);
                     gain.gain.setValueAtTime(0.3, now);
                     gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
-                    osc.start(now);
-                    osc.stop(now + 0.4);
+                    osc.start(now); osc.stop(now + 0.4);
                 } else if (type === 'buzzer') {
                     osc.type = 'sawtooth';
                     osc.frequency.setValueAtTime(110, now);
                     osc.frequency.setValueAtTime(116.54, now + 0.15);
                     gain.gain.setValueAtTime(0.4, now);
                     gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
-                    osc.start(now);
-                    osc.stop(now + 0.6);
+                    osc.start(now); osc.stop(now + 0.6);
                 }
-            } catch(e) { console.log('Audio disabled or blocked'); }
+            } catch(e) { console.log('Audio disabled'); }
         }
 
         function toggleDangerousSettings(val) {
             dangerousEnabled = val;
             document.getElementById('dangerous-rules-container').style.opacity = val ? '1' : '0.4';
             document.getElementById('dangerous-rules-container').style.pointerEvents = val ? 'auto' : 'none';
+        }
+
+        function toggleGameMenu() {
+            const menu = document.getElementById('game-menu-dropdown');
+            menu.classList.toggle('hidden');
+        }
+
+        window.onclick = function(event) {
+            if (!event.target.closest('#game-menu-dropdown') && !event.target.closest('button[onclick="toggleGameMenu()"]')) {
+                const menu = document.getElementById('game-menu-dropdown');
+                if (menu && !menu.classList.contains('hidden')) {
+                    menu.classList.add('hidden');
+                }
+            }
         }
 
         function selectGameMode(mode) {
@@ -513,9 +582,10 @@
             
             minSips = parseInt(document.getElementById('min-sips').value);
             maxSips = parseInt(document.getElementById('max-sips').value);
+            hardcoreMode = document.getElementById('hardcore-toggle').checked;
             loserPenalty = document.getElementById('loser-penalty').value;
+            if (hardcoreMode) loserPenalty = "Full Glass Down + Shot!";
             
-            // Gather Dangerous Rules
             dangerousEnabled = document.getElementById('dangerous-toggle').checked;
             activeRulesPool = [];
             if (dangerousEnabled && isDrinkingGame) {
@@ -583,7 +653,9 @@
             const chosenBall = availableBalls[randomIndex];
             availableBalls.splice(randomIndex, 1);
             
-            const sips = isDrinkingGame ? Math.floor(Math.random() * (maxSips - minSips + 1)) + minSips : 0;
+            let sips = isDrinkingGame ? Math.floor(Math.random() * (maxSips - minSips + 1)) + minSips : 0;
+            if (hardcoreMode) sips *= 2;
+            
             const quickSpin = document.getElementById('quick-spin-toggle').checked;
             
             if (quickSpin) {
@@ -594,7 +666,6 @@
                 const wheel = document.getElementById('wheel');
                 wheel.style.transform = `rotate(${targetRotation}deg)`;
                 
-                // Tick sound simulation interval
                 let tickCount = 0;
                 const tickInterval = setInterval(() => {
                     playSound('tick');
@@ -670,7 +741,6 @@
                 table.appendChild(wrapper);
             });
 
-            // Sudden Death Glow check (3 or fewer active player balls left)
             let totalLivePlayerBalls = 0;
             players.forEach(p => { totalLivePlayerBalls += p.balls.filter(b => !b.sunk).length; });
             if (totalLivePlayerBalls <= 3 && totalLivePlayerBalls > 0) {
@@ -697,11 +767,12 @@
                         ballsHTML += `
                             <div class="revealed-ball-container flip-in">
                                 <div style="transform: scale(0.85); transform-origin: top center;">${createBallHTML(b.num)}</div>
-                                ${isDrinkingGame ? `<span class="text-xs font-black text-slate-700 -mt-2">${b.sips} Sips</span>` : ''}
+                                ${isDrinkingGame ? `<span class="text-xs font-black text-slate-700">${b.sips} Sips</span>` : ''}
                             </div>`;
                     }
                 });
 
+                // Fixed: flex-col layout underneath balls so item counts and sips stack vertically rather than side-by-side
                 trays.innerHTML += `
                     <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between ${isEliminated ? 'opacity-50 grayscale' : ''}">
                         <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-2">
@@ -715,26 +786,21 @@
                             </div>
                         </div>
                         
+                        <!-- Drafted / Sunk Balls Row -->
                         <div class="flex justify-center gap-3 mb-6 min-h-[70px] flex-wrap">
                             ${ballsHTML}
                         </div>
                         
-                        <div class="flex justify-between items-center mb-4 px-2">
+                        <!-- Stacked Stats Underneath -->
+                        <div class="flex flex-col gap-2 mb-4 px-2 bg-slate-50 p-3 rounded-xl border border-slate-100">
                             ${isDrinkingGame ? `
-                            <div class="flex items-center gap-2">
-                                <span class="text-xl">🍹</span>
-                                <div>
-                                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Total Sips</p>
-                                    <p class="text-lg font-black text-slate-800 leading-none">${totalSips}</p>
-                                </div>
-                            </div>` : '<div></div>'}
-                            
-                            <div class="flex items-center gap-2 text-right">
-                                <div>
-                                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Balls Left</p>
-                                    <p class="text-lg font-black text-slate-800 leading-none">${liveCount}</p>
-                                </div>
-                                <span class="text-xl">🎱</span>
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs font-bold text-slate-400 uppercase tracking-wide flex items-center gap-1">🍹 Total Sips</span>
+                                <span class="text-base font-black text-slate-800">${totalSips}</span>
+                            </div>` : ''}
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs font-bold text-slate-400 uppercase tracking-wide flex items-center gap-1">🎱 Balls Left</span>
+                                <span class="text-base font-black text-slate-800">${liveCount}</span>
                             </div>
                         </div>
                         
@@ -767,25 +833,23 @@
                 owner.eliminated = liveCount === 0;
                 renderPlayerTrays();
                 
-                // Roll Global Event if Dangerous enabled and rules pool has items
-                let triggeredRule = null;
+                pendingGlobalEvent = null;
                 if (dangerousEnabled && isDrinkingGame && activeRulesPool.length > 0) {
                     if (tableBall.num === 8 && activeRulesPool.includes('8-Ball Special')) {
-                        triggeredRule = '8-Ball Special';
+                        pendingGlobalEvent = '8-Ball Special';
                     } else {
-                        // Random chance or pick from pool
                         const availableNon8 = activeRulesPool.filter(r => r !== '8-Ball Special');
                         if (availableNon8.length > 0 && Math.random() < 0.6) {
-                            triggeredRule = availableNon8[Math.floor(Math.random() * availableNon8.length)];
+                            pendingGlobalEvent = availableNon8[Math.floor(Math.random() * availableNon8.length)];
                         }
                     }
-                    if (triggeredRule && !currentActiveRules.includes(triggeredRule)) {
-                        currentActiveRules.push(triggeredRule);
+                    if (pendingGlobalEvent && !currentActiveRules.includes(pendingGlobalEvent)) {
+                        currentActiveRules.push(pendingGlobalEvent);
                         updateBanner();
                     }
                 }
                 
-                showSunkModal(owner, playerBallInfo, liveCount, owner.eliminated, triggeredRule);
+                showSunkModal(owner, playerBallInfo, liveCount, owner.eliminated);
             }
         }
 
@@ -804,40 +868,16 @@
             renderPlayerTrays();
         }
 
-        function showSunkModal(owner, ballInfo, liveCount, isEliminated, globalRule) {
+        function showSunkModal(owner, ballInfo, liveCount, isEliminated) {
             playSound('chime');
             const mode = document.getElementById('game-mode').value;
             const title = document.getElementById('sunk-title');
             const desc = document.getElementById('sunk-desc');
             const drink = document.getElementById('sunk-drink-order');
-            const eventBox = document.getElementById('global-event-box');
-            const lavaTimer = document.getElementById('lava-timer-display');
             
             document.getElementById('sunk-ball-display').innerHTML = createBallHTML(ballInfo.num);
             drink.classList.add('hidden');
-            eventBox.classList.add('hidden');
-            lavaTimer.classList.add('hidden');
-            clearInterval(lavaTimerInterval);
 
-            if (globalRule) {
-                eventBox.classList.remove('hidden');
-                document.getElementById('global-event-rule-name').innerText = globalRule;
-                if (globalRule === 'The Floor is Lava') {
-                    lavaTimer.classList.remove('hidden');
-                    let timeLeft = 5;
-                    lavaTimer.innerText = timeLeft;
-                    lavaTimerInterval = setInterval(() => {
-                        timeLeft--;
-                        lavaTimer.innerText = timeLeft;
-                        playSound('tick');
-                        if(timeLeft <= 0) {
-                            clearInterval(lavaTimerInterval);
-                            playSound('buzzer');
-                        }
-                    }, 1000);
-                }
-            }
-            
             if(mode === 'reveal') {
                 title.innerText = `${owner.name}'s Ball!`;
                 desc.innerText = isEliminated ? `0 balls remaining. Eliminated!` : `${liveCount} balls left in play.`;
@@ -856,10 +896,47 @@
             document.getElementById('sunk-modal').classList.add('active');
         }
 
-        function closeSunk() { 
+        function proceedToEventOrClose() {
+            document.getElementById('sunk-modal').classList.remove('active');
+            if (pendingGlobalEvent) {
+                showRulePopup(pendingGlobalEvent);
+            } else {
+                checkEndGame();
+            }
+        }
+
+        function showRulePopup(ruleName) {
+            playSound('chime');
+            document.getElementById('rule-popup-name').innerText = ruleName;
+            document.getElementById('rule-popup-desc').innerText = ruleDescriptions[ruleName] || 'New party rule activated!';
+            
+            const timerContainer = document.getElementById('lava-timer-container');
+            timerContainer.classList.add('hidden');
             clearInterval(lavaTimerInterval);
-            document.getElementById('sunk-modal').classList.remove('active'); 
-            checkEndGame(); 
+
+            if (ruleName === 'The Floor is Lava') {
+                timerContainer.classList.remove('hidden');
+                let timeLeft = 5;
+                document.getElementById('lava-timer-display').innerText = timeLeft;
+                lavaTimerInterval = setInterval(() => {
+                    timeLeft--;
+                    document.getElementById('lava-timer-display').innerText = timeLeft;
+                    playSound('tick');
+                    if(timeLeft <= 0) {
+                        clearInterval(lavaTimerInterval);
+                        playSound('buzzer');
+                    }
+                }, 1000);
+            }
+
+            document.getElementById('rule-popup-modal').classList.add('active');
+        }
+
+        function closeRulePopup() {
+            clearInterval(lavaTimerInterval);
+            document.getElementById('rule-popup-modal').classList.remove('active');
+            pendingGlobalEvent = null;
+            checkEndGame();
         }
 
         function checkWinCondition() {
@@ -971,6 +1048,57 @@
             document.getElementById('peek-modal').classList.remove('active');
         }
 
+        function openAdminModal() {
+            document.getElementById('game-menu-dropdown').classList.add('hidden');
+            const container = document.getElementById('admin-players-list');
+            container.innerHTML = '';
+            
+            players.forEach((p, pIdx) => {
+                let ballsHtml = '';
+                p.balls.forEach((b, bIdx) => {
+                    ballsHtml += `
+                        <div class="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200 text-xs font-bold">
+                            <span>Ball #${b.num}</span>
+                            <span class="text-slate-400">Sips:</span>
+                            <input type="number" min="1" max="20" value="${b.sips}" onchange="adminUpdateBallSips(${pIdx}, ${bIdx}, this.value)" class="w-14 p-1 border rounded text-center font-bold">
+                            <span class="ml-auto ${b.sunk ? 'text-red-500' : 'text-emerald-500'}">${b.sunk ? 'Sunk' : 'Active'}</span>
+                        </div>
+                    `;
+                });
+
+                container.innerHTML += `
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
+                        <div class="flex items-center gap-2">
+                            <select onchange="adminUpdateAvatar(${pIdx}, this.value)" class="p-1 text-lg bg-white border rounded">
+                                ${avatarList.map(a => `<option value="${a}" ${a === p.avatar ? 'selected' : ''}>${a}</option>`).join('')}
+                            </select>
+                            <input type="text" value="${p.name}" onchange="adminUpdateName(${pIdx}, this.value)" class="form-input flex-1 py-1 px-3 text-sm">
+                            <button onclick="adminToggleElimination(${pIdx})" class="px-3 py-1 rounded text-xs font-bold ${p.eliminated ? 'bg-red-100 text-red-600' : 'bg-emerald-100 text-emerald-600'}">
+                                ${p.eliminated ? 'Eliminated' : 'Active'}
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            ${ballsHtml}
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('admin-modal').classList.add('active');
+        }
+
+        function closeAdminModal() {
+            document.getElementById('admin-modal').classList.remove('active');
+        }
+
+        function adminUpdateName(pIdx, val) { players[pIdx].name = val; }
+        function adminUpdateAvatar(pIdx, val) { players[pIdx].avatar = val; }
+        function adminUpdateBallSips(pIdx, bIdx, val) { players[pIdx].balls[bIdx].sips = parseInt(val) || 1; }
+        function adminToggleElimination(pIdx) {
+            players[pIdx].eliminated = !players[pIdx].eliminated;
+            openAdminModal();
+            renderPlayerTrays();
+        }
+
         function rematchSame() {
             document.getElementById('end-modal').classList.remove('active');
             document.getElementById('game-screen').classList.remove('active');
@@ -984,7 +1112,6 @@
             document.getElementById('game-screen').classList.remove('active');
             document.getElementById('setup-screen').classList.add('active');
         }
-
     </script>
 </body>
 </html>
