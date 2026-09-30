@@ -1,53 +1,104 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pool Numbers Game</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pool Numbers - Premium Drinking Game</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background-color: #0f172a; color: white; font-family: system-ui, -apple-system, sans-serif; }
-        .screen { display: none; }
-        .screen.active { display: block; }
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 50; justify-content: center; align-items: center; padding: 1rem; }
-        .modal.active { display: flex; }
-        #wheel-container { position: relative; width: 300px; height: 300px; margin: 0 auto; border-radius: 50%; border: 4px solid #334155; overflow: hidden; }
-        #wheel { width: 100%; height: 100%; border-radius: 50%; transition: transform 4s cubic-bezier(0.1, 0.7, 0.1, 1); }
-        .slice { position: absolute; top: 0; left: 0; width: 100%; height: 100%; clip-path: polygon(50% 50%, 50% 0%, 100% 0%, 100% 50%); transform-origin: 50% 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: white; text-shadow: 1px 1px 2px black; }
-        .pointer { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 25px solid white; z-index: 10; }
-        .pool-ball { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; cursor: pointer; border: 2px solid #fff; position: relative; overflow: hidden; box-shadow: inset -5px -5px 10px rgba(0,0,0,0.5); }
-        .pool-ball .circle { width: 30px; height: 30px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: black; z-index: 2; }
-        .ball-sunk { opacity: 0.3; pointer-events: none; }
-        .shake { animation: shake 0.5s; }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
+        body { 
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%); 
+            color: white; 
+            font-family: system-ui, -apple-system, sans-serif; 
+            min-height: 100vh;
+        }
+        .screen { display: none; opacity: 0; transition: opacity 0.4s ease; }
+        .screen.active { display: block; opacity: 1; animation: fadeIn 0.4s ease-out forwards; }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); z-index: 50; justify-content: center; align-items: center; padding: 1rem; opacity: 0; transition: opacity 0.3s ease;}
+        .modal.active { display: flex; opacity: 1; animation: scaleUp 0.3s ease-out forwards;}
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes scaleUp { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        
+        /* Premium Wheel */
+        #wheel-container { 
+            position: relative; width: 300px; height: 300px; margin: 0 auto; 
+            border-radius: 50%; border: 8px solid #1e293b; 
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.5), inset 0 0 20px rgba(0,0,0,0.5);
+        }
+        #wheel { width: 100%; height: 100%; border-radius: 50%; transition: transform 4s cubic-bezier(0.1, 0.7, 0.1, 1); overflow: hidden;}
+        .pointer { 
+            position: absolute; top: -15px; left: 50%; transform: translateX(-50%); 
+            width: 30px; height: 30px; background: white; 
+            clip-path: polygon(50% 100%, 0 0, 100% 0); z-index: 10; 
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6));
+        }
+
+        /* 3D Pool Table */
+        .pool-table-surface {
+            background-color: #166534;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.15'/%3E%3C/svg%3E");
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.8);
+        }
+        .pool-pocket {
+            position: absolute; width: 36px; height: 36px; background: #000;
+            border-radius: 50%; box-shadow: inset 0 5px 10px rgba(255,255,255,0.1);
+            z-index: 0;
+        }
+
+        /* Utility animations */
+        .shake { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake { 10%, 90% { transform: translateX(-2px); } 20%, 80% { transform: translateX(4px); } 30%, 50%, 70% { transform: translateX(-6px); } 40%, 60% { transform: translateX(6px); } }
+        
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        input, select { color: white !important; }
+        input[type="number"] { -moz-appearance: textfield; }
+        input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
     </style>
 </head>
-<body class="p-4 md:p-8">
+<body class="p-4 md:p-8 flex flex-col items-center">
+
 
     <!-- SETUP SCREEN -->
-    <div id="setup-screen" class="screen active max-w-lg mx-auto space-y-6">
-        <h1 class="text-3xl font-bold text-center text-blue-400">Pool Numbers</h1>
+    <div id="setup-screen" class="screen active w-full max-w-lg space-y-6">
+        <div class="text-center space-y-2 mb-8">
+            <h1 class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400 drop-shadow-lg tracking-tight">Pool Numbers</h1>
+            <p class="text-slate-400 font-medium">The Ultimate Billiards Draft</p>
+        </div>
         
         <!-- Drinking Rules -->
-        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-bold text-emerald-400">Drinking Rules & Stakes</h2>
-                <input type="checkbox" id="drink-toggle" class="w-6 h-6" checked onchange="toggleDrinking()">
+        <div class="glass-panel p-5 rounded-2xl shadow-xl">
+            <div class="flex justify-between items-center mb-5 pb-4 border-b border-slate-700/50">
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl">🍻</span>
+                    <h2 class="text-lg font-bold text-emerald-400">Drinking Rules & Stakes</h2>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="drink-toggle" class="sr-only peer" checked onchange="toggleDrinking()">
+                    <div class="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
+                </label>
             </div>
-            <div id="drink-settings" class="space-y-4">
+            
+            <div id="drink-settings" class="space-y-5">
                 <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm mb-1">Min Sips (per ball)</label>
-                        <input type="number" id="min-sips" value="1" min="1" class="w-full p-2 bg-slate-900 rounded text-white">
+                    <div class="bg-slate-900/50 p-3 rounded-xl border border-slate-700/50">
+                        <label class="block text-xs text-slate-400 uppercase font-bold mb-2">Min Sips / Ball</label>
+                        <input type="number" id="min-sips" value="1" min="1" class="w-full bg-transparent text-xl font-bold focus:outline-none text-center">
                     </div>
-                    <div>
-                        <label class="block text-sm mb-1">Max Sips (per ball)</label>
-                        <input type="number" id="max-sips" value="7" min="1" class="w-full p-2 bg-slate-900 rounded text-white">
+                    <div class="bg-slate-900/50 p-3 rounded-xl border border-slate-700/50">
+                        <label class="block text-xs text-slate-400 uppercase font-bold mb-2">Max Sips / Ball</label>
+                        <input type="number" id="max-sips" value="7" min="1" class="w-full bg-transparent text-xl font-bold focus:outline-none text-center">
                     </div>
                 </div>
                 <div>
-                    <label class="block text-sm mb-1">Loser's Penalty (All balls sunk)</label>
-                    <select id="loser-penalty" class="w-full p-2 bg-slate-900 rounded text-white">
+                    <label class="block text-xs text-slate-400 uppercase font-bold mb-2 ml-1">Loser's Penalty (All balls sunk)</label>
+                    <select id="loser-penalty" class="w-full p-3 bg-slate-900/80 rounded-xl border border-slate-700/50 text-sm font-bold focus:border-blue-500 outline-none transition-colors appearance-none">
                         <option value="1 Sip">1 Sip</option>
                         <option value="3 Sips">3 Sips</option>
                         <option value="5 Sips">5 Sips</option>
@@ -60,127 +111,198 @@
         </div>
 
         <!-- Match Setup -->
-        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
-            <h2 class="text-xl font-bold text-blue-400 mb-4">Match & Player Setup</h2>
-            <div class="grid grid-cols-2 gap-4 mb-4">
-                <div>
-                    <label class="block text-sm mb-1">Players (2-7)</label>
-                    <input type="number" id="player-count" value="2" min="2" max="7" class="w-full p-2 bg-slate-900 rounded" onchange="renderPlayerInputs()">
+        <div class="glass-panel p-5 rounded-2xl shadow-xl">
+            <div class="flex items-center gap-2 mb-5 pb-4 border-b border-slate-700/50">
+                <span class="text-2xl">🎱</span>
+                <h2 class="text-lg font-bold text-blue-400">Match & Player Setup</h2>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4 mb-5">
+                <div class="bg-slate-900/50 p-3 rounded-xl border border-slate-700/50">
+                    <label class="block text-xs text-slate-400 uppercase font-bold mb-2">Players (2-7)</label>
+                    <input type="number" id="player-count" value="2" min="2" max="7" class="w-full bg-transparent text-xl font-bold focus:outline-none text-center" onchange="renderPlayerInputs()">
                 </div>
-                <div>
-                    <label class="block text-sm mb-1">Balls Each</label>
-                    <input type="number" id="balls-each" value="4" min="1" max="7" class="w-full p-2 bg-slate-900 rounded" onchange="renderPlayerInputs()">
+                <div class="bg-slate-900/50 p-3 rounded-xl border border-slate-700/50">
+                    <label class="block text-xs text-slate-400 uppercase font-bold mb-2">Balls Each</label>
+                    <input type="number" id="balls-each" value="4" min="1" max="7" class="w-full bg-transparent text-xl font-bold focus:outline-none text-center" onchange="renderPlayerInputs()">
                 </div>
             </div>
-            <p id="rack-warning" class="text-red-400 text-sm hidden mb-4">Error: Players × Balls exceeds 15!</p>
+            
+            <div id="rack-warning" class="hidden mb-4 p-3 bg-red-900/30 border border-red-500/50 rounded-lg text-red-400 text-sm font-bold text-center flex items-center justify-center gap-2">
+                <span>⚠️</span> Error: Players × Balls exceeds 15 limit!
+            </div>
+            
+            <!-- Player Inputs Container (Flex fixes overlap) -->
             <div id="player-inputs" class="space-y-3"></div>
-            <button onclick="startGame()" class="w-full mt-6 bg-blue-600 hover:bg-blue-500 py-3 rounded-xl font-bold text-lg">Start Draft</button>
+            
+            <button onclick="startGame()" class="w-full mt-6 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 shadow-lg shadow-blue-500/30 py-4 rounded-xl font-black text-lg uppercase tracking-wide transition-all active:scale-95">
+                Start Draft
+            </button>
         </div>
     </div>
 
+
     <!-- DRAFT SCREEN -->
-    <div id="draft-screen" class="screen max-w-lg mx-auto text-center space-y-6">
-        <h2 class="text-2xl font-bold">Secret Draft</h2>
-        <p id="draft-status" class="text-lg text-blue-300"></p>
-        <div id="wheel-container">
+    <div id="draft-screen" class="screen w-full max-w-lg text-center space-y-6">
+        <div class="glass-panel p-4 rounded-2xl inline-block px-8">
+            <h2 class="text-2xl font-black uppercase tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">Secret Draft</h2>
+            <p id="draft-status" class="text-sm font-bold text-blue-300 mt-1"></p>
+        </div>
+        
+        <div id="wheel-container" class="my-8">
             <div class="pointer"></div>
             <div id="wheel"></div>
         </div>
-        <button id="spin-btn" onclick="spinWheel()" class="bg-emerald-600 px-8 py-3 rounded-xl font-bold text-xl w-full">Spin Wheel</button>
-        <div id="drafted-balls" class="flex justify-center gap-2 flex-wrap min-h-[60px]"></div>
+        
+        <button id="spin-btn" onclick="spinWheel()" class="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 shadow-lg shadow-emerald-500/30 px-8 py-4 rounded-xl font-black text-xl uppercase tracking-wide w-full transition-all active:scale-95">
+            Spin Wheel
+        </button>
+        
+        <div class="glass-panel p-4 rounded-2xl min-h-[90px]">
+            <p class="text-xs text-slate-400 uppercase font-bold mb-2">Drafted This Turn</p>
+            <div id="drafted-balls" class="flex justify-center gap-2 flex-wrap"></div>
+        </div>
     </div>
 
-    <!-- GAME SCREEN -->
-    <div id="game-screen" class="screen max-w-2xl mx-auto space-y-6">
-        <div class="flex justify-between items-center bg-slate-800 p-4 rounded-xl">
-            <h2 class="text-2xl font-bold">Live Table</h2>
-            <select id="game-mode" class="bg-slate-900 p-2 rounded text-white border border-slate-700">
+    <!-- GAME SCREEN (Table & Hands) -->
+    <div id="game-screen" class="screen w-full max-w-2xl space-y-6">
+        <div class="glass-panel flex justify-between items-center p-4 rounded-2xl shadow-lg">
+            <h2 class="text-xl font-black uppercase tracking-wide flex items-center gap-2">
+                <span>🎱</span> Live Table
+            </h2>
+            <select id="game-mode" class="bg-slate-900/80 p-2.5 rounded-lg text-sm font-bold border border-slate-700/50 outline-none focus:border-blue-500 transition-colors">
                 <option value="reveal">Reveal Mode</option>
                 <option value="secret">Secret / Mystery Mode</option>
             </select>
         </div>
         
-        <div id="billiards-table" class="bg-green-800 p-6 rounded-2xl border-8 border-yellow-900 flex flex-wrap justify-center gap-4 shadow-2xl">
-            <!-- Balls generated here -->
+        <!-- 3D Realistic Pool Table -->
+        <div class="relative bg-[#3e2723] p-4 md:p-6 rounded-3xl shadow-[0_20px_40px_rgba(0,0,0,0.6)]">
+            <div id="billiards-table" class="pool-table-surface rounded-xl p-4 md:p-8 flex flex-col items-center gap-1 md:gap-2 relative z-10 border-4 border-[#2d1b15]">
+                <!-- Pockets -->
+                <div class="pool-pocket top-[-10px] left-[-10px]"></div>
+                <div class="pool-pocket top-[-10px] right-[-10px]"></div>
+                <div class="pool-pocket bottom-[-10px] left-[-10px]"></div>
+                <div class="pool-pocket bottom-[-10px] right-[-10px]"></div>
+                <div class="pool-pocket top-[50%] left-[-18px] translate-y-[-50%]"></div>
+                <div class="pool-pocket top-[50%] right-[-18px] translate-y-[-50%]"></div>
+                
+                <!-- Triangle Rack generated dynamically here -->
+            </div>
         </div>
         
-        <button onclick="undoLastBall()" class="text-slate-400 underline text-sm w-full text-center">Undo Last Sunk Ball</button>
+        <button onclick="undoLastBall()" class="flex items-center justify-center gap-2 text-slate-400 hover:text-white transition-colors text-sm w-full font-medium py-2">
+            <span>↩️</span> Undo Last Sunk Ball
+        </button>
 
-        <div id="player-trays" class="grid grid-cols-2 gap-4">
-            <!-- Player trays with peek buttons -->
+        <div id="player-trays" class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+            <!-- Player trays -->
         </div>
     </div>
+
 
     <!-- MODALS -->
     <!-- Privacy Handoff -->
     <div id="handoff-modal" class="modal">
-        <div class="bg-slate-800 p-8 rounded-xl text-center space-y-6 w-full max-w-md">
-            <h2 class="text-3xl font-bold text-red-400">Privacy Pass</h2>
-            <p id="handoff-text" class="text-xl">Hand the phone to Player.</p>
-            <button onclick="closeHandoff()" class="bg-blue-600 px-6 py-3 rounded-xl font-bold w-full">I am ready</button>
+        <div class="glass-panel p-8 rounded-3xl text-center space-y-6 w-full max-w-sm border border-blue-500/30 shadow-[0_0_50px_rgba(59,130,246,0.2)]">
+            <div class="text-5xl animate-bounce mb-2">📱</div>
+            <h2 class="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-orange-400 uppercase tracking-wide">Privacy Pass</h2>
+            <p id="handoff-text" class="text-lg font-medium text-white">Hand the phone to Player.</p>
+            <p class="text-xs text-slate-400">Opponents look away!</p>
+            <button onclick="closeHandoff()" class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 px-6 py-4 rounded-xl font-black uppercase w-full shadow-lg transition-all active:scale-95">
+                I am ready
+            </button>
         </div>
     </div>
 
-    <!-- Keypad -->
+    <!-- PIN Keypad -->
     <div id="keypad-modal" class="modal">
-        <div class="bg-slate-800 p-6 rounded-xl text-center space-y-4 w-full max-w-sm">
-            <h2 class="text-xl font-bold">Enter 4-Digit PIN</h2>
-            <p class="text-sm text-slate-400">Admin override: 1793</p>
-            <div id="pin-display" class="text-3xl tracking-[1em] font-mono h-12 bg-slate-900 flex items-center justify-center rounded"></div>
-            <div class="grid grid-cols-3 gap-2">
-                <button onclick="pressPin('1')" class="bg-slate-700 p-4 rounded text-xl">1</button>
-                <button onclick="pressPin('2')" class="bg-slate-700 p-4 rounded text-xl">2</button>
-                <button onclick="pressPin('3')" class="bg-slate-700 p-4 rounded text-xl">3</button>
-                <button onclick="pressPin('4')" class="bg-slate-700 p-4 rounded text-xl">4</button>
-                <button onclick="pressPin('5')" class="bg-slate-700 p-4 rounded text-xl">5</button>
-                <button onclick="pressPin('6')" class="bg-slate-700 p-4 rounded text-xl">6</button>
-                <button onclick="pressPin('7')" class="bg-slate-700 p-4 rounded text-xl">7</button>
-                <button onclick="pressPin('8')" class="bg-slate-700 p-4 rounded text-xl">8</button>
-                <button onclick="pressPin('9')" class="bg-slate-700 p-4 rounded text-xl">9</button>
-                <button onclick="pressPin('C')" class="bg-red-900 p-4 rounded text-xl">C</button>
-                <button onclick="pressPin('0')" class="bg-slate-700 p-4 rounded text-xl">0</button>
-                <button onclick="closeKeypad()" class="bg-slate-600 p-4 rounded text-sm">Cancel</button>
+        <div class="glass-panel p-6 rounded-3xl text-center space-y-5 w-full max-w-sm border border-slate-600/50 shadow-2xl">
+            <div>
+                <h2 class="text-lg font-black uppercase text-blue-400">Security Lock</h2>
+                <p class="text-xs text-slate-400 mt-1">Admin override: 1793</p>
+            </div>
+            
+            <div id="pin-display" class="text-4xl tracking-[0.5em] font-mono h-14 bg-slate-900/80 border border-slate-700/50 flex items-center justify-center rounded-xl text-white shadow-inner"></div>
+            
+            <div class="grid grid-cols-3 gap-3 max-w-[260px] mx-auto">
+                <button onclick="pressPin('1')" class="bg-slate-800/80 hover:bg-slate-700 p-4 rounded-xl text-2xl font-bold transition-colors active:scale-95">1</button>
+                <button onclick="pressPin('2')" class="bg-slate-800/80 hover:bg-slate-700 p-4 rounded-xl text-2xl font-bold transition-colors active:scale-95">2</button>
+                <button onclick="pressPin('3')" class="bg-slate-800/80 hover:bg-slate-700 p-4 rounded-xl text-2xl font-bold transition-colors active:scale-95">3</button>
+                <button onclick="pressPin('4')" class="bg-slate-800/80 hover:bg-slate-700 p-4 rounded-xl text-2xl font-bold transition-colors active:scale-95">4</button>
+                <button onclick="pressPin('5')" class="bg-slate-800/80 hover:bg-slate-700 p-4 rounded-xl text-2xl font-bold transition-colors active:scale-95">5</button>
+                <button onclick="pressPin('6')" class="bg-slate-800/80 hover:bg-slate-700 p-4 rounded-xl text-2xl font-bold transition-colors active:scale-95">6</button>
+                <button onclick="pressPin('7')" class="bg-slate-800/80 hover:bg-slate-700 p-4 rounded-xl text-2xl font-bold transition-colors active:scale-95">7</button>
+                <button onclick="pressPin('8')" class="bg-slate-800/80 hover:bg-slate-700 p-4 rounded-xl text-2xl font-bold transition-colors active:scale-95">8</button>
+                <button onclick="pressPin('9')" class="bg-slate-800/80 hover:bg-slate-700 p-4 rounded-xl text-2xl font-bold transition-colors active:scale-95">9</button>
+                <button onclick="pressPin('C')" class="bg-red-900/60 hover:bg-red-800/80 text-red-400 p-4 rounded-xl text-xl font-black transition-colors active:scale-95">C</button>
+                <button onclick="pressPin('0')" class="bg-slate-800/80 hover:bg-slate-700 p-4 rounded-xl text-2xl font-bold transition-colors active:scale-95">0</button>
+                <button onclick="closeKeypad()" class="bg-slate-800/50 hover:bg-slate-700 p-4 rounded-xl text-sm font-bold text-slate-400 transition-colors active:scale-95">Cancel</button>
             </div>
         </div>
     </div>
 
-    <!-- Peek Hand -->
+    <!-- Peek Hand View -->
     <div id="peek-modal" class="modal">
-        <div class="bg-slate-800 p-6 rounded-xl text-center space-y-4 w-full max-w-md border-4 border-blue-600">
-            <h2 id="peek-name" class="text-2xl font-bold">Your Hand</h2>
-            <p id="admin-badge" class="text-xs bg-red-600 text-white rounded px-2 py-1 hidden inline-block">Admin Override Used</p>
-            <p class="text-sm text-red-400">Auto-locking in <span id="peek-timer">5</span>s...</p>
-            <div id="peek-balls" class="flex flex-col gap-2 max-h-[50vh] overflow-y-auto p-2"></div>
-            <button onclick="closePeek()" class="bg-red-600 px-6 py-3 rounded-xl font-bold w-full">Hide & Lock Now</button>
+        <div class="glass-panel p-6 rounded-3xl text-center w-full max-w-sm border-2 border-blue-500 shadow-[0_0_40px_rgba(59,130,246,0.3)] flex flex-col">
+            <div class="flex justify-between items-center mb-4">
+                <h2 id="peek-name" class="text-xl font-black uppercase text-white">Your Hand</h2>
+                <div class="bg-red-500/20 text-red-400 text-[10px] font-black uppercase px-2 py-1 rounded-full border border-red-500/30">
+                    Locking in <span id="peek-timer" class="text-sm">5</span>s
+                </div>
+            </div>
+            
+            <p id="admin-badge" class="text-[10px] bg-red-600 text-white rounded px-2 py-1 hidden uppercase font-bold self-center mb-3">Admin Override Used</p>
+            
+            <div id="peek-balls" class="flex flex-col gap-2 max-h-[50vh] overflow-y-auto p-1 mb-4 custom-scroll"></div>
+            
+            <button onclick="closePeek()" class="mt-auto bg-slate-800 hover:bg-slate-700 px-6 py-4 rounded-xl font-bold uppercase tracking-wider w-full border border-slate-600 transition-colors active:scale-95">
+                Hide & Lock Now
+            </button>
         </div>
     </div>
 
     <!-- Ball Sunk Alert -->
     <div id="sunk-modal" class="modal">
-        <div class="bg-slate-800 p-8 rounded-xl text-center space-y-4 w-full max-w-sm border-2 border-slate-600">
-            <div id="sunk-ball-display" class="flex justify-center mb-4"></div>
-            <h2 id="sunk-title" class="text-2xl font-bold text-yellow-400">Ball Sunk!</h2>
-            <p id="sunk-desc" class="text-lg"></p>
-            <div id="sunk-drink-order" class="text-xl font-bold text-emerald-400 bg-emerald-900/30 p-3 rounded hidden"></div>
-            <button onclick="closeSunk()" class="bg-blue-600 px-6 py-2 rounded-xl font-bold w-full mt-4">Acknowledge</button>
+        <div class="glass-panel p-8 rounded-3xl text-center space-y-5 w-full max-w-sm border border-slate-500/50 shadow-2xl relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-400 via-red-500 to-purple-500"></div>
+            
+            <div id="sunk-ball-display" class="flex justify-center my-4 scale-125"></div>
+            
+            <h2 id="sunk-title" class="text-2xl font-black uppercase text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-400 drop-shadow-md">Ball Sunk!</h2>
+            <p id="sunk-desc" class="text-sm font-medium text-slate-300"></p>
+            
+            <div id="sunk-drink-order" class="text-lg font-black text-emerald-400 bg-emerald-900/40 border border-emerald-500/50 p-4 rounded-xl hidden shadow-inner"></div>
+            
+            <button onclick="closeSunk()" class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 px-6 py-3 rounded-xl font-bold uppercase w-full mt-2 shadow-lg transition-all active:scale-95">
+                Continue Match
+            </button>
         </div>
     </div>
 
     <!-- Game Over -->
     <div id="end-modal" class="modal">
-        <div class="bg-slate-800 p-8 rounded-xl text-center space-y-6 w-full max-w-md">
-            <h2 id="end-title" class="text-4xl font-bold">Game Over</h2>
-            <p id="end-desc" class="text-xl"></p>
-            <div class="space-y-3 pt-4 border-t border-slate-700">
-                <button onclick="rematchSame()" class="bg-emerald-600 px-6 py-3 rounded-xl font-bold w-full">Play Again (Same Squad & PINs)</button>
-                <button onclick="rematchModify()" class="bg-blue-600 px-6 py-3 rounded-xl font-bold w-full">Add / Modify Players</button>
-                <button onclick="location.reload()" class="bg-red-600 px-6 py-3 rounded-xl font-bold w-full">Brand New Game</button>
+        <div class="glass-panel p-8 rounded-3xl text-center space-y-6 w-full max-w-md border-2 border-yellow-500/50 shadow-[0_0_60px_rgba(234,179,8,0.2)]">
+            <h2 id="end-title" class="text-4xl font-black uppercase tracking-tight">Game Over</h2>
+            <p id="end-desc" class="text-lg font-medium"></p>
+            
+            <div class="space-y-3 pt-6 border-t border-slate-700/50">
+                <button onclick="rematchSame()" class="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 px-6 py-4 rounded-xl font-bold uppercase text-sm w-full shadow-lg transition-all active:scale-95">
+                    🔄 Play Again (Same Squad)
+                </button>
+                <button onclick="rematchModify()" class="bg-slate-700 hover:bg-slate-600 border border-slate-600 px-6 py-3 rounded-xl font-bold uppercase text-xs w-full transition-all active:scale-95">
+                    👥 Add / Modify Players
+                </button>
+                <button onclick="location.reload()" class="text-red-400 hover:text-red-300 text-xs font-bold uppercase w-full py-2">
+                    ⚠️ Brand New Game
+                </button>
             </div>
         </div>
     </div>
 
+
     <script>
-        const ballColors = ["#facc15", "#2563eb", "#dc2626", "#4c1d95", "#ea580c", "#16a34a", "#7f1d1d", "#000000", "#facc15", "#2563eb", "#dc2626", "#4c1d95", "#ea580c", "#16a34a", "#7f1d1d"];
+        const ballColors = ["#facc15", "#2563eb", "#dc2626", "#4c1d95", "#ea580c", "#16a34a", "#7f1d1d", "#171717", "#facc15", "#2563eb", "#dc2626", "#4c1d95", "#ea580c", "#16a34a", "#7f1d1d"];
         let players = [];
         let availableBalls = [];
         let tableBalls = [];
@@ -201,6 +323,7 @@
             document.getElementById('drink-settings').style.display = isDrinkingGame ? 'block' : 'none';
         }
 
+        // UX Upgrade: Use flex-col to flex-row so names and PINs stack beautifully on mobile
         function renderPlayerInputs() {
             const count = parseInt(document.getElementById('player-count').value);
             ballsPerPlayer = parseInt(document.getElementById('balls-each').value);
@@ -218,29 +341,76 @@
                 const name = players[i] ? players[i].name : `Player ${i+1}`;
                 const pin = players[i] ? players[i].pin : ``;
                 container.innerHTML += `
-                    <div class="flex gap-2">
-                        <input type="text" id="p-name-${i}" value="${name}" placeholder="Name" class="flex-1 p-2 bg-slate-900 rounded">
-                        <input type="text" id="p-pin-${i}" value="${pin}" placeholder="4-Digit PIN" maxlength="4" class="w-32 p-2 bg-slate-900 rounded text-center" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                    <div class="flex flex-col sm:flex-row gap-2 bg-slate-900/50 p-2 rounded-xl border border-slate-700/50">
+                        <input type="text" id="p-name-${i}" value="${name}" placeholder="Player ${i+1} Name" class="flex-1 p-3 bg-slate-900 rounded-lg text-white font-bold focus:border-blue-500 outline-none transition-colors">
+                        <input type="password" inputmode="numeric" id="p-pin-${i}" value="${pin}" placeholder="4-Digit PIN" maxlength="4" class="w-full sm:w-32 p-3 bg-slate-900 rounded-lg text-center text-blue-400 font-mono tracking-widest font-bold focus:border-blue-500 outline-none transition-colors" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                     </div>`;
             }
         }
         
+        // UX Upgrade: True conic gradient wheel with perfectly centered readable text
         function drawWheel() {
             const wheel = document.getElementById('wheel');
             wheel.innerHTML = '';
-            const sliceAngle = 360 / 15;
-            for(let i = 0; i < 15; i++) {
-                const slice = document.createElement('div');
-                slice.className = 'slice';
-                slice.style.transform = `rotate(${i * sliceAngle}deg)`;
-                slice.style.backgroundColor = ballColors[i];
-                if(i >= 8 && i !== 7) { 
-                    slice.style.background = `repeating-linear-gradient(90deg, white, white 30%, ${ballColors[i]} 30%, ${ballColors[i]} 70%, white 70%, white 100%)`;
-                    slice.style.color = "black";
-                }
-                slice.innerHTML = `<span style="transform: rotate(90deg) translateX(80px);">${i+1}</span>`;
-                wheel.appendChild(slice);
+            
+            const numSlices = 15;
+            const sliceAngle = 360 / numSlices;
+            
+            let gradientStr = [];
+            for(let i=0; i<numSlices; i++) {
+                gradientStr.push(`${ballColors[i]} ${i * sliceAngle}deg ${(i+1) * sliceAngle}deg`);
             }
+            wheel.style.background = `conic-gradient(${gradientStr.join(', ')})`;
+            
+            for(let i = 0; i < numSlices; i++) {
+                const labelContainer = document.createElement('div');
+                labelContainer.className = 'absolute top-0 left-0 w-full h-full flex justify-center pt-3 pointer-events-none';
+                
+                const centerAngle = i * sliceAngle + (sliceAngle / 2);
+                labelContainer.style.transform = `rotate(${centerAngle}deg)`;
+                
+                // Stripes have a white bg behind the text for visibility
+                const isStripe = (i+1) > 8;
+                const textColor = (i+1) === 8 ? 'text-white' : 'text-black';
+                const bgClass = isStripe ? 'bg-white/90 rounded px-1' : '';
+                
+                labelContainer.innerHTML = `<span class="font-black text-xl drop-shadow-[0_2px_3px_rgba(255,255,255,0.4)] ${textColor} ${bgClass}" style="transform: rotate(180deg); margin-top: 5px;">${i+1}</span>`;
+                wheel.appendChild(labelContainer);
+            }
+        }
+
+        // UX Upgrade: Advanced 3D CSS rendering for pool balls (spherical gradients)
+        function createBallHTML(num) {
+            const idx = num - 1;
+            const color = ballColors[idx];
+            const isStripe = num > 8;
+            
+            let bgStyle = '';
+            if (isStripe) {
+                bgStyle = `background: #f8fafc; overflow: hidden;`;
+            } else {
+                bgStyle = `background: radial-gradient(circle at 35% 30%, ${color} 0%, ${color} 40%, #000 120%);`;
+            }
+            
+            const textColor = num === 8 ? 'white' : 'black';
+            const numBg = num === 8 ? 'black' : 'white';
+
+            let html = `<div class="relative flex items-center justify-center rounded-full shadow-[2px_5px_10px_rgba(0,0,0,0.6)] w-[50px] h-[50px] md:w-[60px] md:h-[60px] transition-transform hover:scale-105 active:scale-95" style="${bgStyle}">`;
+            
+            if (isStripe) {
+                html += `<div class="absolute w-full h-1/2 top-1/4" style="background: ${color}; box-shadow: inset 0 8px 8px -8px rgba(0,0,0,0.6), inset 0 -8px 8px -8px rgba(0,0,0,0.6);"></div>`;
+                html += `<div class="absolute inset-0 rounded-full" style="background: radial-gradient(circle at 35% 30%, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 30%, rgba(0,0,0,0.7) 100%); pointer-events: none;"></div>`;
+            }
+
+            // Specular shiny highlight
+            html += `<div class="absolute top-[8%] left-[18%] w-[25%] h-[15%] bg-white/50 rounded-full rotate-[-40deg] pointer-events-none blur-[1px]"></div>`;
+            
+            // Number circle
+            const sizeClass = num > 9 ? 'text-[11px] md:text-sm' : 'text-xs md:text-base';
+            html += `<div class="relative z-10 w-[55%] h-[55%] rounded-full flex items-center justify-center font-black ${sizeClass} shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]" style="background: ${numBg}; color: ${textColor};">${num}</div>`;
+            
+            html += `</div>`;
+            return html;
         }
 
         function startGame() {
@@ -291,7 +461,7 @@
         }
 
         function updateDraftStatus() {
-            document.getElementById('draft-status').innerText = `${players[currentPlayerDraftIndex].name}: Drafting ball ${ballsDraftedThisTurn + 1} of ${ballsPerPlayer}`;
+            document.getElementById('draft-status').innerText = `${players[currentPlayerDraftIndex].name} - Drafting ${ballsDraftedThisTurn + 1} of ${ballsPerPlayer}`;
         }
 
         function spinWheel() {
@@ -302,11 +472,12 @@
             const chosenBall = availableBalls[randomIndex];
             availableBalls.splice(randomIndex, 1);
             
-            // Random sips
             const sips = isDrinkingGame ? Math.floor(Math.random() * (maxSips - minSips + 1)) + minSips : 0;
             
+            // UX Upgrade: Spin math aligned with the conic gradient (0deg = top)
             const sliceAngle = 360 / 15;
-            const targetRotation = (360 * 5) - ((chosenBall - 1) * sliceAngle); 
+            const sliceIndex = chosenBall - 1;
+            const targetRotation = (360 * 5) - (sliceIndex * sliceAngle + (sliceAngle / 2)); 
             
             const wheel = document.getElementById('wheel');
             wheel.style.transform = `rotate(${targetRotation}deg)`;
@@ -315,7 +486,7 @@
                 players[currentPlayerDraftIndex].balls.push({ num: chosenBall, sips: sips, sunk: false });
                 ballsDraftedThisTurn++;
                 
-                const ballEl = createBallHTML(chosenBall);
+                const ballEl = `<div class="scale-90 origin-center">${createBallHTML(chosenBall)}</div>`;
                 document.getElementById('drafted-balls').innerHTML += ballEl;
                 
                 wheel.style.transition = 'none';
@@ -329,13 +500,6 @@
                     setTimeout(nextDraftPlayer, 1500);
                 }
             }, 4100);
-        }
-
-        function createBallHTML(num) {
-            const idx = num - 1;
-            const bg = (num > 8) ? `repeating-linear-gradient(90deg, white, white 25%, ${ballColors[idx]} 25%, ${ballColors[idx]} 75%, white 75%, white 100%)` : ballColors[idx];
-            const col = (num === 8) ? 'white' : 'black';
-            return `<div class="pool-ball" style="background: ${bg};"><div class="circle" style="color:${col}">${num}</div></div>`;
         }
 
         function nextDraftPlayer() {
@@ -354,26 +518,54 @@
             renderPlayerTrays();
         }
 
+        // UX Upgrade: Staggered triangle layout for the pool table
         function renderTable() {
             const table = document.getElementById('billiards-table');
-            table.innerHTML = '';
-            tableBalls.forEach(tb => {
-                const wrapper = document.createElement('div');
-                wrapper.innerHTML = createBallHTML(tb.num);
-                if(tb.sunk) wrapper.firstChild.classList.add('ball-sunk');
-                wrapper.onclick = () => handleBallClick(tb);
-                table.appendChild(wrapper.firstChild);
+            // Remove previous balls but keep pockets
+            const pocketsHtml = table.innerHTML.match(/<div class="pool-pocket.*?<\/div>/g).join('');
+            table.innerHTML = pocketsHtml;
+            
+            const rowCounts = [1, 2, 3, 4, 5];
+            const rackVisualOrder = [1, 2,3, 4,8,5, 6,7,9,10, 11,12,13,14,15];
+            let currentIdx = 0;
+            
+            rowCounts.forEach(count => {
+                let rowDiv = document.createElement('div');
+                rowDiv.className = "flex justify-center gap-1 md:gap-2 w-full z-10";
+                
+                for(let i=0; i<count; i++) {
+                    const expectedNum = rackVisualOrder[currentIdx];
+                    const tb = tableBalls.find(b => b.num === expectedNum);
+                    
+                    if (tb) {
+                        const wrapper = document.createElement('div');
+                        wrapper.className = "cursor-pointer";
+                        wrapper.innerHTML = createBallHTML(tb.num);
+                        
+                        if(tb.sunk) {
+                            wrapper.firstChild.classList.add('opacity-40', 'scale-90', 'grayscale');
+                            wrapper.innerHTML += `<div class="absolute inset-0 flex items-center justify-center text-red-500 text-4xl font-black drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] pointer-events-none">✕</div>`;
+                            wrapper.className = "relative pointer-events-none";
+                        } else {
+                            wrapper.onclick = () => handleBallClick(tb);
+                        }
+                        rowDiv.appendChild(wrapper);
+                    }
+                    currentIdx++;
+                }
+                table.appendChild(rowDiv);
             });
         }
 
+        // UX Upgrade: Sleek glass cards for player trays
         function renderPlayerTrays() {
             const trays = document.getElementById('player-trays');
             trays.innerHTML = '';
             players.forEach((p, idx) => {
                 trays.innerHTML += `
-                    <div class="bg-slate-700 p-4 rounded-xl text-center border-t-4 ${p.eliminated ? 'border-red-600 opacity-50' : 'border-blue-500'}">
-                        <h3 class="font-bold mb-2">${p.name}</h3>
-                        <button onclick="openKeypad(${idx})" class="bg-slate-800 border border-slate-600 px-4 py-2 rounded text-sm w-full hover:bg-slate-600 flex items-center justify-center gap-2">
+                    <div class="glass-panel p-4 rounded-2xl text-center border-t-4 ${p.eliminated ? 'border-red-500/50 opacity-60' : 'border-emerald-500/80 shadow-lg'}">
+                        <h3 class="font-black text-sm uppercase tracking-wide mb-3 truncate">${p.name}</h3>
+                        <button onclick="openKeypad(${idx})" class="bg-slate-800/80 border border-slate-600 px-4 py-2.5 rounded-xl text-xs font-bold w-full hover:bg-slate-700 flex items-center justify-center gap-2 transition-all active:scale-95 text-blue-300">
                             🔒 Peek Hand
                         </button>
                     </div>`;
@@ -431,20 +623,20 @@
             
             if(mode === 'reveal') {
                 title.innerText = `${owner.name}'s ball!`;
-                desc.innerText = isEliminated ? `0 balls remaining! Eliminated!` : `${liveCount} balls left in play.`;
+                desc.innerHTML = isEliminated ? `<span class="text-red-400 font-bold">0 balls remaining! Eliminated!</span>` : `<span class="text-emerald-400 font-bold">${liveCount} balls</span> left in play.`;
                 
                 if(isDrinkingGame) {
                     drink.classList.remove('hidden');
-                    drink.innerText = isEliminated 
-                        ? `LOSER PENALTY: ${loserPenalty}` 
-                        : `${owner.name} must take ${ballInfo.sips} Sips!`;
+                    drink.innerHTML = isEliminated 
+                        ? `<span class="text-sm text-red-400 uppercase">💀 Loser Penalty</span><br>${loserPenalty}` 
+                        : `Take ${ballInfo.sips} Sip${ballInfo.sips > 1 ? 's' : ''}!`;
                 }
             } else {
-                title.innerText = `Mystery Ball Sunk!`;
+                title.innerText = `Mystery Ball!`;
                 desc.innerText = `Someone just took a hit...`;
                 if(isDrinkingGame) {
                     drink.classList.remove('hidden');
-                    drink.innerText = `Owner takes ${ballInfo.sips} Sips! (Secret)`;
+                    drink.innerHTML = `Owner takes ${ballInfo.sips} Sip${ballInfo.sips > 1 ? 's' : ''}! <span class="text-xs font-normal block opacity-70">(Keep it secret)</span>`;
                 }
             }
             document.getElementById('sunk-modal').classList.add('active');
@@ -457,10 +649,8 @@
             const livePlayers = players.filter(p => !p.eliminated);
             
             if(activeTableBalls === 0 || livePlayers.length === 0) {
-                // Table cleared but no single winner = Mutual Loss
                 triggerGameOver(null, true);
             } else if(activeTableBalls === 1 && livePlayers.length === 1) {
-                // One ball left on table AND it belongs to the 1 live player = Clean Win
                 triggerGameOver(livePlayers[0], false);
             }
         }
@@ -478,14 +668,14 @@
             
             if(mutualLoss) {
                 title.innerText = "Mutual Loss!";
-                title.className = "text-4xl font-bold text-red-500";
+                title.className = "text-5xl font-black uppercase text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500 tracking-tight drop-shadow-lg";
                 desc.innerHTML = isDrinkingGame 
-                    ? `Double Sink or Table Cleared!<br>Both players drink: <b>${loserPenalty}</b>` 
+                    ? `<span class="text-slate-300">Double Sink or Table Cleared!</span><br><br><span class="text-xs uppercase font-bold text-red-400 block mb-1">Double Penalty (Both drink)</span><span class="text-2xl font-black text-white">${loserPenalty}</span>` 
                     : `Double Sink! Nobody wins!`;
             } else {
                 title.innerText = `${winner.name} Wins!`;
-                title.className = "text-4xl font-bold text-emerald-400";
-                desc.innerText = `Last Ball Standing!`;
+                title.className = "text-5xl font-black uppercase text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400 tracking-tight drop-shadow-lg";
+                desc.innerHTML = `<span class="text-2xl">🏆</span><br>Last Ball Standing!`;
             }
         }
 
@@ -514,7 +704,7 @@
             } else {
                 const kp = document.getElementById('keypad-modal').firstElementChild;
                 kp.classList.add('shake');
-                setTimeout(() => kp.classList.remove('shake'), 500);
+                setTimeout(() => kp.classList.remove('shake'), 400);
                 currentPinInput = "";
                 document.getElementById('pin-display').innerText = "";
             }
@@ -531,12 +721,12 @@
             ballsDiv.innerHTML = '';
             playerToUnlock.balls.forEach(b => {
                 ballsDiv.innerHTML += `
-                    <div class="flex items-center justify-between bg-slate-900 p-3 rounded border ${b.sunk ? 'border-red-900 opacity-50' : 'border-emerald-600'}">
+                    <div class="flex items-center justify-between bg-slate-900/80 p-3 rounded-xl border ${b.sunk ? 'border-red-900/50 opacity-60 grayscale' : 'border-emerald-600/50 shadow-inner'}">
                         <div class="flex items-center gap-3">
-                            <div class="scale-50 origin-left">${createBallHTML(b.num)}</div>
-                            <span class="font-bold ${b.sunk ? 'text-red-400' : 'text-emerald-400'}">${b.sunk ? 'SUNK' : 'ALIVE'}</span>
+                            <div class="scale-75 origin-left -my-2">${createBallHTML(b.num)}</div>
+                            <span class="font-black text-sm tracking-wide ${b.sunk ? 'text-red-400' : 'text-emerald-400'}">${b.sunk ? 'SUNK' : 'ALIVE'}</span>
                         </div>
-                        ${isDrinkingGame ? `<span class="text-slate-300 text-sm">${b.sips} Sips</span>` : ''}
+                        ${isDrinkingGame ? `<span class="text-amber-400 font-bold text-sm bg-amber-900/30 px-2 py-1 rounded border border-amber-500/30">🍻 ${b.sips} Sip${b.sips>1?'s':''}</span>` : ''}
                     </div>`;
             });
             
@@ -573,3 +763,4 @@
     </script>
 </body>
 </html>
+```
