@@ -23,7 +23,7 @@
         /* Wheel Styling */
         #wheel-container, #risk-wheel-container { position: relative; width: 300px; height: 300px; margin: 0 auto; border-radius: 50%; border: 12px solid #cbd5e1; box-shadow: 0 10px 25px rgba(0,0,0,0.1), inset 0 0 15px rgba(0,0,0,0.3); background: white; }
         #wheel, #risk-wheel { width: 100%; height: 100%; border-radius: 50%; transition: transform 4s cubic-bezier(0.1, 0.7, 0.1, 1); position: relative; overflow: hidden; }
-        .slice { position: absolute; width: 62px; height: 50%; left: calc(50% - 31px); top: 0; transform-origin: bottom center; display: flex; justify-content: center; padding-top: 10px; font-weight: 900; font-size: 1.25rem; text-shadow: 0px 1px 3px rgba(255,255,255,0.8); clip-path: polygon(0 0, 100% 0, 50% 100%); }
+        .slice { position: absolute; width: 62px; height: 50%; left: calc(50% - 31px); top: 0; transform-origin: bottom center; display: flex; justify-content: center; padding-top: 10px; font-weight: 900; font-size: 1rem; text-shadow: 0px 1px 3px rgba(255,255,255,0.8); clip-path: polygon(0 0, 100% 0, 50% 100%); }
         .slice-stripe-bg { position: absolute; top: 25%; bottom: 25%; left: 0; right: 0; z-index: 1; }
         .slice-number { position: relative; z-index: 2; color: #0f172a; text-shadow: 0px 1px 2px rgba(255,255,255,0.9); }
         .slice-number.solid-light { color: #ffffff; text-shadow: 0px 1px 2px rgba(0,0,0,0.8); }
@@ -93,15 +93,6 @@
             <h3 class="font-black text-lg flex items-center gap-2"><span class="text-xl">📋</span> Game Rules</h3>
             
             <div id="drink-settings" class="space-y-6 border-b border-slate-100 pb-6">
-                <!-- Hardcore Drinking Mode Toggle -->
-                <div class="bg-pink-50 border border-pink-200 p-4 rounded-2xl flex items-center justify-between">
-                    <div>
-                        <p class="font-black text-sm text-pink-700">🔥 Hardcore Drinking Mode</p>
-                        <p class="text-xs text-pink-500 font-semibold">Doubles sips & intensifies penalties</p>
-                    </div>
-                    <input type="checkbox" id="hardcore-toggle" class="w-6 h-6 accent-pink-600 cursor-pointer">
-                </div>
-
                 <div>
                     <label class="block text-sm font-bold text-slate-500 mb-4">Min / Max Sips per Ball</label>
                     <div class="flex items-center gap-4">
@@ -338,7 +329,7 @@
         </div>
     </div>
 
-    <!-- Sudden Death Alert Modal (Feature #3) -->
+    <!-- Sudden Death Alert Modal -->
     <div id="sudden-death-modal" class="modal">
         <div class="bg-gradient-to-br from-red-900 via-rose-950 to-slate-900 p-8 rounded-3xl text-center space-y-6 w-full max-w-sm border-2 border-red-500 shadow-[0_0_35px_rgba(239,68,68,0.6)] relative">
             <div class="w-16 h-16 bg-red-500/20 border border-red-400 rounded-full flex items-center justify-center mx-auto text-3xl animate-pulse">🔥</div>
@@ -361,8 +352,8 @@
             <!-- High-Sip Risk Wheel Prompt Box (Triggered if sips >= 3) -->
             <div id="risk-wheel-prompt-box" class="bg-pink-600/30 border border-pink-500 p-4 rounded-2xl space-y-3 hidden">
                 <p class="text-xs font-black text-pink-300 uppercase tracking-wide">🔥 High Penalty (3+ Sips)!</p>
-                <p class="text-xs text-white font-semibold">Do you want to risk it on the 70/30 Risk Wheel?</p>
-                <button onclick="openRiskWheelModal()" class="w-full bg-pink-600 hover:bg-pink-500 text-white py-2.5 rounded-xl font-black text-sm shadow-md transition">🎡 Spin Risk Wheel (70/30)</button>
+                <p class="text-xs text-white font-semibold">Do you want to risk it on the Risk Wheel?</p>
+                <button onclick="openRiskWheelModal()" class="w-full bg-pink-600 hover:bg-pink-500 text-white py-2.5 rounded-xl font-black text-sm shadow-md transition">🎡 Spin Risk Wheel</button>
             </div>
 
             <div id="sunk-drink-order" class="text-4xl font-black text-amber-500 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] italic hidden"></div>
@@ -371,11 +362,11 @@
         </div>
     </div>
 
-    <!-- Risk Wheel Modal (70% Red / 30% Green Odds) -->
+    <!-- Risk Wheel Modal (5 Red, 4 Green, 1 Rainbow Special) -->
     <div id="risk-wheel-modal" class="modal">
         <div class="bg-slate-900 p-6 rounded-3xl text-center space-y-4 w-full max-w-sm border-2 border-pink-500 shadow-2xl relative">
-            <h2 class="text-2xl font-black text-pink-400">🔥 High-Sip Risk Wheel</h2>
-            <p class="text-xs font-bold text-slate-400">70% Red (Drink Double) vs 30% Green (Give Sips away)</p>
+            <h2 class="text-2xl font-black text-pink-400">🔥 Risk Wheel Gamble</h2>
+            <p class="text-xs font-bold text-slate-400">Red: Drink Double | Green: Give Sips | Rainbow: Give Double Sips!</p>
             
             <div id="risk-wheel-container" class="my-4">
                 <div class="pointer" style="border-top-color: #ec4899;"></div>
@@ -384,7 +375,7 @@
             </div>
 
             <div id="target-player-select-box" class="space-y-2 hidden">
-                <label class="block text-xs font-bold text-emerald-400">🎉 GREEN HIT! Choose who takes your sips:</label>
+                <label id="target-label" class="block text-xs font-bold text-emerald-400">🎉 Choose who takes your sips:</label>
                 <select id="risk-target-player" class="form-input text-xs bg-slate-800 text-white py-2"></select>
                 <button onclick="assignRiskSipsToTarget()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 py-2.5 rounded-xl font-black text-xs">Confirm & Give Sips</button>
             </div>
@@ -427,17 +418,18 @@
         const ballColors = ["#facc15", "#2563eb", "#dc2626", "#4c1d95", "#ea580c", "#16a34a", "#7f1d1d", "#1e293b", "#facc15", "#2563eb", "#dc2626", "#4c1d95", "#ea580c", "#16a34a", "#7f1d1d"];
         const avatarList = ["🤠", "🤡", "👽", "🍻", "🚀", "🔥", "💀", "🦊", "🤖", "🦄"];
         
+        // Full 10-slice wheel: 5 Red (double), 4 Green (give), 1 Rainbow Special (give double)
         const riskWheelSlices = [
             { text: "RED: Drink Double", color: "#dc2626", type: "double" },
             { text: "RED: Drink Double", color: "#b91c1c", type: "double" },
             { text: "RED: Drink Double", color: "#ef4444", type: "double" },
             { text: "RED: Drink Double", color: "#991b1b", type: "double" },
-            { text: "RED: Drink Double", color: "#dc2626", type: "double" },
             { text: "RED: Drink Double", color: "#7f1d1d", type: "double" },
-            { text: "RED: Drink Double", color: "#ef4444", type: "double" },
             { text: "GREEN: Give Sips", color: "#16a34a", type: "give" },
             { text: "GREEN: Give Sips", color: "#15803d", type: "give" },
-            { text: "GREEN: Give Sips", color: "#22c55e", type: "give" }
+            { text: "GREEN: Give Sips", color: "#22c55e", type: "give" },
+            { text: "GREEN: Give Sips", color: "#166534", type: "give" },
+            { text: "🌈 RAINBOW: Give Double", color: "linear-gradient(135deg, #ec4899, #8b5cf6, #3b82f6)", type: "rainbow" }
         ];
         
         let players = [];
@@ -640,8 +632,13 @@
                 const slice = document.createElement('div');
                 slice.className = 'slice';
                 slice.style.transform = `rotate(${i * sliceAngle}deg)`;
-                slice.style.backgroundColor = riskWheelSlices[i].color;
-                slice.innerHTML = `<span class="slice-number text-xs" style="color:white; font-size:9px;">${riskWheelSlices[i].text.includes('RED') ? '🔴 DOUBLE' : '🟢 GIVE'}</span>`;
+                if (riskWheelSlices[i].type === 'rainbow') {
+                    slice.style.background = "linear-gradient(135deg, #ec4899, #8b5cf6, #3b82f6)";
+                    slice.innerHTML = `<span class="slice-number text-xs" style="color:white; font-size:8px;">🌈 SPECIAL</span>`;
+                } else {
+                    slice.style.backgroundColor = riskWheelSlices[i].color;
+                    slice.innerHTML = `<span class="slice-number text-xs" style="color:white; font-size:9px;">${riskWheelSlices[i].text.includes('RED') ? '🔴 DOUBLE' : '🟢 GIVE'}</span>`;
+                }
                 wheel.appendChild(slice);
             }
         }
@@ -677,9 +674,7 @@
             
             minSips = parseInt(document.getElementById('min-sips').value);
             maxSips = parseInt(document.getElementById('max-sips').value);
-            hardcoreMode = document.getElementById('hardcore-toggle').checked;
             loserPenalty = document.getElementById('loser-penalty').value;
-            if (hardcoreMode) loserPenalty = "Full Glass Down + Shot!";
             
             dangerousEnabled = document.getElementById('dangerous-toggle').checked;
             activeRulesPool = [];
@@ -751,9 +746,7 @@
             const chosenBall = availableBalls[randomIndex];
             availableBalls.splice(randomIndex, 1);
             
-            let sips = isDrinkingGame ? Math.floor(Math.random() * (maxSips - minSips + 1)) + minSips : 0;
-            if (hardcoreMode) sips *= 2;
-            
+            const sips = isDrinkingGame ? Math.floor(Math.random() * (maxSips - minSips + 1)) + minSips : 0;
             const quickSpin = document.getElementById('quick-spin-toggle').checked;
             
             if (quickSpin) {
@@ -1046,7 +1039,7 @@
 
         function openRiskWheelModal() {
             document.getElementById('sunk-modal').classList.remove('active');
-            document.getElementById('risk-result-text').innerText = "Spin for Red (Double) or Green (Give)s!";
+            document.getElementById('risk-result-text').innerText = "Spin for Red (Double), Green (Give), or Rainbow (Give Double)!";
             document.getElementById('spin-risk-btn').disabled = false;
             document.getElementById('target-player-select-box').classList.add('hidden');
             document.getElementById('risk-wheel-modal').classList.add('active');
@@ -1071,20 +1064,27 @@
                 clearInterval(tInterval);
                 playSound('chime');
                 const outcome = riskWheelSlices[randomIdx];
-                
+                const targetSelect = document.getElementById('risk-target-player');
+                const targetLabel = document.getElementById('target-label');
+                targetSelect.innerHTML = '';
+                players.forEach(p => {
+                    if (p.id !== lastSunkOwner.id) {
+                        targetSelect.innerHTML += `<option value="${p.id}">${p.name} (${p.avatar})</option>`;
+                    }
+                });
+
                 if (outcome.type === 'double') {
                     lastSunkBallInfo.sips *= 2;
                     renderPlayerTrays();
                     document.getElementById('risk-result-text').innerHTML = `🔴 RED HIT! <span class="text-red-400">Drink Double (${lastSunkBallInfo.sips} Sips)!</span>`;
-                } else {
-                    document.getElementById('risk-result-text').innerHTML = `🟢 GREEN HIT! <span class="text-emerald-400">Give sips to another player!</span>`;
-                    const targetSelect = document.getElementById('risk-target-player');
-                    targetSelect.innerHTML = '';
-                    players.forEach(p => {
-                        if (p.id !== lastSunkOwner.id) {
-                            targetSelect.innerHTML += `<option value="${p.id}">${p.name} (${p.avatar})</option>`;
-                        }
-                    });
+                } else if (outcome.type === 'give') {
+                    document.getElementById('risk-result-text').innerHTML = `🟢 GREEN HIT! <span class="text-emerald-400">Give your sips to someone!</span>`;
+                    targetLabel.innerText = "🎉 GREEN HIT! Choose who takes your sips:";
+                    document.getElementById('target-player-select-box').classList.remove('hidden');
+                } else if (outcome.type === 'rainbow') {
+                    lastSunkBallInfo.sips *= 2;
+                    document.getElementById('risk-result-text').innerHTML = `🌈 RAINBOW SPECIAL! <span class="text-pink-400">Give DOUBLE sips (${lastSunkBallInfo.sips}) to someone!</span>`;
+                    targetLabel.innerText = "🌈 RAINBOW SPECIAL! Choose who takes double sips:";
                     document.getElementById('target-player-select-box').classList.remove('hidden');
                 }
 
@@ -1313,3 +1313,4 @@
     </script>
 </body>
 </html>
+
