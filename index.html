@@ -21,15 +21,13 @@
         .bg-dark-glass { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(15px); }
 
         /* Wheel Styling */
-        #wheel-container, #risk-wheel-container { position: relative; width: 300px; height: 300px; margin: 0 auto; border-radius: 50%; border: 12px solid #cbd5e1; box-shadow: 0 10px 25px rgba(0,0,0,0.1), inset 0 0 15px rgba(0,0,0,0.3); background: white; }
+        #wheel-container, #risk-wheel-container { position: relative; width: 300px; height: 300px; margin: 0 auto; border-radius: 50%; border: 12px solid #1e293b; box-shadow: 0 10px 25px rgba(0,0,0,0.3), inset 0 0 15px rgba(0,0,0,0.4); background: #0f172a; }
         #wheel, #risk-wheel { width: 100%; height: 100%; border-radius: 50%; transition: transform 4s cubic-bezier(0.1, 0.7, 0.1, 1); position: relative; overflow: hidden; }
-        .slice { position: absolute; width: 62px; height: 50%; left: calc(50% - 31px); top: 0; transform-origin: bottom center; display: flex; justify-content: center; padding-top: 10px; font-weight: 900; font-size: 1rem; text-shadow: 0px 1px 3px rgba(255,255,255,0.8); clip-path: polygon(0 0, 100% 0, 50% 100%); }
-        .slice-stripe-bg { position: absolute; top: 25%; bottom: 25%; left: 0; right: 0; z-index: 1; }
-        .slice-number { position: relative; z-index: 2; color: #0f172a; text-shadow: 0px 1px 2px rgba(255,255,255,0.9); }
-        .slice-number.solid-light { color: #ffffff; text-shadow: 0px 1px 2px rgba(0,0,0,0.8); }
+        .slice { position: absolute; width: 62px; height: 50%; left: calc(50% - 31px); top: 0; transform-origin: bottom center; display: flex; justify-content: center; padding-top: 12px; font-weight: 900; font-size: 0.9rem; text-shadow: 0px 1px 3px rgba(0,0,0,0.8); clip-path: polygon(0 0, 100% 0, 50% 100%); }
+        .slice-number { position: relative; z-index: 2; color: #ffffff; text-align: center; line-height: 1.1; }
         
-        .wheel-peg { position: absolute; width: 36px; height: 36px; background: #1e293b; border-radius: 50%; top: calc(50% - 18px); left: calc(50% - 18px); z-index: 10; border: 3px solid #64748b; box-shadow: 0 4px 6px rgba(0,0,0,0.5); }
-        .pointer { position: absolute; top: -18px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 18px solid transparent; border-right: 18px solid transparent; border-top: 30px solid #3b82f6; z-index: 20; filter: drop-shadow(0 4px 4px rgba(0,0,0,0.3)); }
+        .wheel-peg { position: absolute; width: 36px; height: 36px; background: #cbd5e1; border-radius: 50%; top: calc(50% - 18px); left: calc(50% - 18px); z-index: 10; border: 4px solid #0f172a; box-shadow: 0 4px 6px rgba(0,0,0,0.5); }
+        .pointer { position: absolute; top: -20px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 16px solid transparent; border-right: 16px solid transparent; border-top: 28px solid #ef4444; z-index: 20; filter: drop-shadow(0 4px 4px rgba(0,0,0,0.4)); }
 
         #drafted-balls-tray { min-height: 72px; background: #f1f5f9; border-radius: 1rem; border: 2px dashed #cbd5e1; display: flex; justify-content: center; align-items: center; gap: 8px; padding: 12px; flex-wrap: wrap; }
 
@@ -121,7 +119,6 @@
                     </select>
                 </div>
 
-                <!-- Let's Get Dangerous & Streamlined Rule Pool -->
                 <div class="pt-2 border-t border-slate-100">
                     <div class="flex items-center justify-between mb-3">
                         <span class="font-black text-sm text-slate-700 flex items-center gap-1.5">⚡ Let's Get Dangerous</span>
@@ -136,7 +133,6 @@
                         <label class="flex items-center gap-3 cursor-pointer py-1"><input type="checkbox" class="rule-chk accent-pink-500 w-4 h-4" value="The Floor is Lava" checked> 🌋 The Floor is Lava</label>
                     </div>
 
-                    <!-- Custom Rule Creator Input -->
                     <div class="mt-3 flex gap-2">
                         <input type="text" id="custom-rule-input" placeholder="Type custom house rule..." class="form-input text-xs py-2 bg-white">
                         <button type="button" onclick="addCustomRule()" class="bg-pink-600 hover:bg-pink-700 text-white font-black px-4 rounded-xl text-xs transition shadow-sm">+ Add</button>
@@ -204,7 +200,6 @@
             <div class="flex items-center gap-3">
                 <div id="mode-badge" class="bg-drinking px-4 py-1.5 rounded-full text-white text-xs font-bold shadow-sm">Drinking Game</div>
                 
-                <!-- Top Right Game Menu Dropdown -->
                 <div class="relative">
                     <button onclick="toggleGameMenu()" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center font-bold text-slate-700 transition">☰</button>
                     <div id="game-menu-dropdown" class="absolute right-0 mt-2 w-52 bg-white rounded-2xl shadow-xl border border-slate-100 py-2 hidden z-40">
@@ -216,7 +211,6 @@
             </div>
         </div>
         
-        <!-- Persistent Active Rules Ticker -->
         <div id="active-rules-banner" class="bg-pink-50 border border-pink-200 p-3 rounded-xl flex items-center gap-3 hidden">
             <span class="text-xl animate-bounce">⚡</span>
             <div class="overflow-hidden whitespace-nowrap flex-1">
@@ -224,9 +218,7 @@
             </div>
         </div>
         
-        <div id="billiards-table" class="p-6 md:p-8 flex flex-wrap justify-center items-center gap-3 md:gap-5">
-            <!-- Balls generated here -->
-        </div>
+        <div id="billiards-table" class="p-6 md:p-8 flex flex-wrap justify-center items-center gap-3 md:gap-5"></div>
         
         <div class="flex justify-between items-center px-2">
             <select id="game-mode" class="bg-white border border-slate-200 text-slate-600 font-bold py-2 px-3 rounded-lg text-sm shadow-sm">
@@ -236,14 +228,11 @@
             <button onclick="undoLastBall()" class="text-slate-400 hover:text-blue-500 text-sm font-bold transition">Undo Last Sink ↺</button>
         </div>
 
-        <div id="player-trays" class="grid grid-cols-1 md:grid-cols-2 gap-4 pb-8">
-            <!-- Trays generated here -->
-        </div>
+        <div id="player-trays" class="grid grid-cols-1 md:grid-cols-2 gap-4 pb-8"></div>
     </div>
 
     <!-- 5. MODALS -->
     
-    <!-- Handoff -->
     <div id="handoff-modal" class="modal">
         <div class="bg-white p-8 rounded-3xl text-center space-y-6 w-full max-w-xs shadow-2xl relative overflow-hidden border border-slate-100">
             <div class="absolute top-0 left-0 w-full h-2 bg-blue-500"></div>
@@ -254,7 +243,6 @@
         </div>
     </div>
 
-    <!-- Keypad (Frosted Glass) -->
     <div id="keypad-modal" class="modal">
         <div class="bg-dark-glass p-8 rounded-3xl text-center space-y-8 w-full max-w-sm shadow-2xl border border-slate-700/50">
             <div class="flex justify-between items-center text-white mb-2">
@@ -289,7 +277,6 @@
         </div>
     </div>
 
-    <!-- Peek Modal -->
     <div id="peek-modal" class="modal">
         <div class="bg-white p-6 rounded-3xl text-center space-y-4 w-full max-w-sm shadow-2xl border-4 border-blue-500">
             <h2 id="peek-name" class="text-2xl font-black text-blue-600">Your Hand</h2>
@@ -300,7 +287,6 @@
         </div>
     </div>
 
-    <!-- Shot History Modal (Grudge Board) -->
     <div id="history-modal" class="modal">
         <div class="bg-white p-6 rounded-3xl space-y-4 w-full max-w-sm shadow-2xl border border-slate-200">
             <div class="flex justify-between items-center border-b border-slate-100 pb-3">
@@ -314,7 +300,6 @@
         </div>
     </div>
 
-    <!-- Admin Control Panel Modal -->
     <div id="admin-modal" class="modal">
         <div class="bg-white p-6 rounded-3xl space-y-4 w-full max-w-lg shadow-2xl border border-slate-200 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b border-slate-100 pb-3">
@@ -329,7 +314,6 @@
         </div>
     </div>
 
-    <!-- Sudden Death Alert Modal -->
     <div id="sudden-death-modal" class="modal">
         <div class="bg-gradient-to-br from-red-900 via-rose-950 to-slate-900 p-8 rounded-3xl text-center space-y-6 w-full max-w-sm border-2 border-red-500 shadow-[0_0_35px_rgba(239,68,68,0.6)] relative">
             <div class="w-16 h-16 bg-red-500/20 border border-red-400 rounded-full flex items-center justify-center mx-auto text-3xl animate-pulse">🔥</div>
@@ -342,14 +326,12 @@
         </div>
     </div>
 
-    <!-- Sunk Alert (Step 1: Penalty & 3+ Sip Risk Wheel Prompt) -->
     <div id="sunk-modal" class="modal">
         <div class="bg-dark-glass p-8 rounded-3xl text-center space-y-4 w-full max-w-sm border border-slate-700/50 shadow-2xl relative confetti-bg">
             <button onclick="proceedToEventOrClose()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-2xl font-bold">×</button>
             <div id="sunk-ball-display" class="flex justify-center transform scale-[1.8] my-6 drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]"></div>
             <h2 id="sunk-title" class="text-2xl font-black text-white"></h2>
             
-            <!-- High-Sip Risk Wheel Prompt Box (Triggered if sips >= 3) -->
             <div id="risk-wheel-prompt-box" class="bg-pink-600/30 border border-pink-500 p-4 rounded-2xl space-y-3 hidden">
                 <p class="text-xs font-black text-pink-300 uppercase tracking-wide">🔥 High Penalty (3+ Sips)!</p>
                 <p class="text-xs text-white font-semibold">Do you want to risk it on the Risk Wheel?</p>
@@ -362,14 +344,14 @@
         </div>
     </div>
 
-    <!-- Risk Wheel Modal (5 Red, 4 Green, 1 Rainbow Special) -->
+    <!-- Risk Wheel Modal (50% Red, 40% Green, 10% Gold Jackpot matching reference graphic) -->
     <div id="risk-wheel-modal" class="modal">
-        <div class="bg-slate-900 p-6 rounded-3xl text-center space-y-4 w-full max-w-sm border-2 border-pink-500 shadow-2xl relative">
-            <h2 class="text-2xl font-black text-pink-400">🔥 Risk Wheel Gamble</h2>
-            <p class="text-xs font-bold text-slate-400">Red: Drink Double | Green: Give Sips | Rainbow: Give Double Sips!</p>
+        <div class="bg-slate-900 p-6 rounded-3xl text-center space-y-4 w-full max-w-sm border-2 border-amber-500 shadow-2xl relative">
+            <h2 class="text-2xl font-black text-amber-400">🔥 Risk Wheel Gamble</h2>
+            <p class="text-xs font-bold text-slate-400">50% Red (Double) | 40% Green (Give Sips) | 10% Gold Jackpot (Give Double)!</p>
             
             <div id="risk-wheel-container" class="my-4">
-                <div class="pointer" style="border-top-color: #ec4899;"></div>
+                <div class="pointer" style="border-top-color: #f59e0b;"></div>
                 <div id="risk-wheel"></div>
                 <div class="wheel-peg"></div>
             </div>
@@ -381,12 +363,11 @@
             </div>
 
             <p id="risk-result-text" class="text-sm font-black text-white min-h-[40px] flex items-center justify-center bg-slate-800 rounded-xl p-2 border border-slate-700">Spin the wheel to test your luck!</p>
-            <button id="spin-risk-btn" onclick="spinRiskWheel()" class="w-full bg-pink-600 hover:bg-pink-500 text-white py-3 rounded-xl font-black text-lg transition shadow-lg">Spin Wheel!</button>
+            <button id="spin-risk-btn" onclick="spinRiskWheel()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 py-3 rounded-xl font-black text-lg transition shadow-lg">Spin Wheel!</button>
             <button onclick="closeRiskWheelModal()" class="w-full bg-slate-800 text-slate-300 py-2 rounded-xl font-bold text-sm">Close</button>
         </div>
     </div>
 
-    <!-- Party Rule Announcement Pop-Up -->
     <div id="rule-popup-modal" class="modal">
         <div class="bg-gradient-to-br from-purple-900 via-pink-900 to-slate-900 p-8 rounded-3xl text-center space-y-6 w-full max-w-sm border-2 border-pink-500 shadow-[0_0_30px_rgba(236,72,153,0.5)] relative">
             <button onclick="closeRulePopup()" class="absolute top-4 right-4 text-pink-300 hover:text-white text-2xl font-bold">×</button>
@@ -400,7 +381,6 @@
         </div>
     </div>
 
-    <!-- Game Over -->
     <div id="end-modal" class="modal">
         <div class="bg-white p-8 rounded-3xl text-center space-y-6 w-full max-w-sm shadow-2xl border border-slate-100">
             <div class="text-6xl mb-2">🏆</div>
@@ -418,7 +398,7 @@
         const ballColors = ["#facc15", "#2563eb", "#dc2626", "#4c1d95", "#ea580c", "#16a34a", "#7f1d1d", "#1e293b", "#facc15", "#2563eb", "#dc2626", "#4c1d95", "#ea580c", "#16a34a", "#7f1d1d"];
         const avatarList = ["🤠", "🤡", "👽", "🍻", "🚀", "🔥", "💀", "🦊", "🤖", "🦄"];
         
-        // Full 10-slice wheel: 5 Red (double), 4 Green (give), 1 Rainbow Special (give double)
+        // Exact 10-slice wheel matching reference graphic: 5 Red (50%), 4 Green (40%), 1 Gold Jackpot (10%)
         const riskWheelSlices = [
             { text: "RED: Drink Double", color: "#dc2626", type: "double" },
             { text: "RED: Drink Double", color: "#b91c1c", type: "double" },
@@ -429,7 +409,7 @@
             { text: "GREEN: Give Sips", color: "#15803d", type: "give" },
             { text: "GREEN: Give Sips", color: "#22c55e", type: "give" },
             { text: "GREEN: Give Sips", color: "#166534", type: "give" },
-            { text: "🌈 RAINBOW: Give Double", color: "linear-gradient(135deg, #ec4899, #8b5cf6, #3b82f6)", type: "rainbow" }
+            { text: "GOLD: Jackpot Give Double", color: "#f59e0b", type: "jackpot" }
         ];
         
         let players = [];
@@ -440,7 +420,6 @@
         let ballsPerPlayer = 4;
         let isDrinkingGame = true;
         let minSips = 1, maxSips = 5;
-        let hardcoreMode = false;
         let loserPenalty = "";
         
         let currentPinInput = "";
@@ -632,13 +611,8 @@
                 const slice = document.createElement('div');
                 slice.className = 'slice';
                 slice.style.transform = `rotate(${i * sliceAngle}deg)`;
-                if (riskWheelSlices[i].type === 'rainbow') {
-                    slice.style.background = "linear-gradient(135deg, #ec4899, #8b5cf6, #3b82f6)";
-                    slice.innerHTML = `<span class="slice-number text-xs" style="color:white; font-size:8px;">🌈 SPECIAL</span>`;
-                } else {
-                    slice.style.backgroundColor = riskWheelSlices[i].color;
-                    slice.innerHTML = `<span class="slice-number text-xs" style="color:white; font-size:9px;">${riskWheelSlices[i].text.includes('RED') ? '🔴 DOUBLE' : '🟢 GIVE'}</span>`;
-                }
+                slice.style.backgroundColor = riskWheelSlices[i].color;
+                slice.innerHTML = `<span class="slice-number" style="color:white; font-size:9px;">${riskWheelSlices[i].type === 'double' ? 'RED<br>50%' : riskWheelSlices[i].type === 'give' ? 'GREEN<br>40%' : 'JACKPOT<br>10%'}</span>`;
                 wheel.appendChild(slice);
             }
         }
@@ -1039,7 +1013,7 @@
 
         function openRiskWheelModal() {
             document.getElementById('sunk-modal').classList.remove('active');
-            document.getElementById('risk-result-text').innerText = "Spin for Red (Double), Green (Give), or Rainbow (Give Double)!";
+            document.getElementById('risk-result-text').innerText = "Spin for Red (Drink Double), Green (Give Sips), or Gold Jackpot (Give Double)!";
             document.getElementById('spin-risk-btn').disabled = false;
             document.getElementById('target-player-select-box').classList.add('hidden');
             document.getElementById('risk-wheel-modal').classList.add('active');
@@ -1081,10 +1055,10 @@
                     document.getElementById('risk-result-text').innerHTML = `🟢 GREEN HIT! <span class="text-emerald-400">Give your sips to someone!</span>`;
                     targetLabel.innerText = "🎉 GREEN HIT! Choose who takes your sips:";
                     document.getElementById('target-player-select-box').classList.remove('hidden');
-                } else if (outcome.type === 'rainbow') {
+                } else if (outcome.type === 'jackpot') {
                     lastSunkBallInfo.sips *= 2;
-                    document.getElementById('risk-result-text').innerHTML = `🌈 RAINBOW SPECIAL! <span class="text-pink-400">Give DOUBLE sips (${lastSunkBallInfo.sips}) to someone!</span>`;
-                    targetLabel.innerText = "🌈 RAINBOW SPECIAL! Choose who takes double sips:";
+                    document.getElementById('risk-result-text').innerHTML = `🪙 GOLD JACKPOT! <span class="text-amber-400">Give DOUBLE sips (${lastSunkBallInfo.sips}) to someone!</span>`;
+                    targetLabel.innerText = "🪙 GOLD JACKPOT! Choose who takes double sips:";
                     document.getElementById('target-player-select-box').classList.remove('hidden');
                 }
 
@@ -1313,4 +1287,3 @@
     </script>
 </body>
 </html>
-
